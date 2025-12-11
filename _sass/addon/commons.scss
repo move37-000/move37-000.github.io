@@ -733,10 +733,10 @@ $btn-mb: 0.5rem;
   }
 
   .profile-wrapper {
-    @include mt-mb(2.5rem);
+    @include mt-mb(4.5rem);
     @extend %clickable-transition;
 
-    padding-left: 2rem;
+    padding-left: 3rem;
     padding-right: 2rem;
     width: 100%;
   }
@@ -748,7 +748,7 @@ $btn-mb: 0.5rem;
     line-height: 1.2;
     letter-spacing: 0.25px;
     color: rgba(134, 133, 133, 0.99);
-    margin-top: 1.25rem;
+    margin-top: 5.25rem;
 
     a {
       @extend %clickable-transition;
@@ -1397,7 +1397,7 @@ $btn-mb: 0.5rem;
 
   #sidebar {
     .profile-wrapper {
-      margin-top: 3rem;
+      margin-top: 5rem;
     }
   }
 

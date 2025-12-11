@@ -1,14 +1,14 @@
 #  The contact options.
 
+- type: github
+  icon: "fab fa-github"
+
 - type: email
   icon: "fas fa-envelope"
 
-- type: linkedin
-  icon: 'fab fa-linkedin'  
-  url:  'https://www.linkedin.com/in/ljy92'                 
-
-- type: github
-  icon: "fab fa-github"
+#- type: linkedin
+#  icon: 'fab fa-linkedin'  
+#  url:  'https://www.linkedin.com'                 
 
 - type: rss
   icon: "fas fa-rss"

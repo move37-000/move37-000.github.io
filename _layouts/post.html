@@ -109,6 +109,8 @@ tail_includes:
   </div>
   {% endif %}
 
+  <br>
+
   <!-- .post-tail-bottom -->
   <div class="post-tail-bottom
     d-flex justify-content-between align-items-center pb-2">
@@ -125,6 +127,13 @@ tail_includes:
         {{ site.data.locales[lang].copyright.license.template | replace: ':LICENSE_NAME', _replacement }}
 
       {% endif %}
+
+      <span class="copyright-ccl-info">
+      이 기사는 저작권자의 
+        <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="license noopener" title="Creative Commons Attribution 4.0 International License" style="color: var(--link-color);">CC BY 4.0</a>
+      라이센스를 따릅니다.
+    </span>
+
     </div>
 
     {% include post-sharing.html lang=lang %}
@@ -132,4 +141,6 @@ tail_includes:
   </div>
 
 </div><!-- div.post-tail-wrapper -->
+
+<br>
 

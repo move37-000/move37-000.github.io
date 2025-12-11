@@ -37,6 +37,7 @@
     <!-- Telegram, Linkedin -->
     {% for share in site.data.share.platforms %}
       {% assign link = share.link | replace: 'TITLE', title | replace: 'URL', url %}
+      <!--
       <a
         href="{{ link }}"
         data-bs-toggle="tooltip"
@@ -47,7 +48,7 @@
         aria-label="{{ share.type }}"
       >
         <i class="fa-fw {{ share.icon }}"></i>
-      </a>
+      </a> -->
     {% endfor %}
 
     <!-- Copy Link -->

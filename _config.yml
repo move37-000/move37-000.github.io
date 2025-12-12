@@ -130,8 +130,8 @@ comments:
   giscus:
     repo: "move37-000/move37-000.github.io"
     repo_id: "R_kgDOQmAo-w"
-    category: "[ENTER CATEGORY NAME HERE]"
-    category_id: "[ENTER CATEGORY ID HERE]"
+    category: "Announcements"
+    category_id: "DIC_kwDOQmAo-84CzpwY"
     mapping: 'pathname'
     strict: '0'
     input_position: bottom

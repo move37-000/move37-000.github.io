@@ -1,0 +1,15 @@
+services:
+  blog:
+    image: github-blog
+    build: .
+    ports:
+      - "4000:4000"
+    command: bundle exec jekyll serve --host 0.0.0.0 --port 4000 --force_polling  
+    volumes:
+      - .:/srv/jekyll
+    #  - vendor_bundle:/srv/jekyll/vendor/bundle
+    environment:
+      - JEKYLL_ENV=development
+
+volumes:
+  vendor_bundle:

@@ -1,0 +1,99 @@
+---
+title: (Docker) Spring 배포 환경 구축기 - 1. 도커의 필요성과 WSL2 설치
+date: 2025-12-26 00:00:00 +09:00
+categories: [Docker, 개발환경]
+tags: [Docker, WSL2, 개발환경]
+description: Docker 와 개발환경
+image: 
+---
+
+> 본 포스팅에서는 아래 내용에 대해 소개합니다.
+> - 실무에서 도커가 '선택'이 아닌 '필수'가 된 이유
+> - 도커의 핵심 개념(이미지, 컨테이너)과 설치 방법
+> - (Windows) WSL2 & Docker Desktop 설치 가이드
+
+# 어? 내 컴퓨터에선 잘 되는데?
+
+개발자라면 한 번쯤 겪어본 당혹스러운 순간이 있죠. 내 로컬 PC에선 완벽하게 돌아가던 코드가 서버에만 올리면 자바 버전이 다르다거나, 환경 변수가 꼬여서 에러를 뿜어내는 상황 말이죠. 이런 고질적인 문제는 개발자의 생산성을 갉아먹는 주범입니다.
+
+> **도커(Docker)**는 이 문제를 '박스(`Container`)' 하나로 깔끔하게 해결해 줍니다.
+{: .prompt-info }
+
+내 컴퓨터의 개발 환경을 통째로 박스에 담아 서버로 옮긴다고 상상해 보세요. 서버의 OS가 무엇이든, 어떤 설정이 되어 있든 상관없습니다. 그 박스만 실행하면 내가 만든 프로그램이 어디서든 똑같이 돌아가니까요!
+
+# 내가 도커를 적용하기로 결심한 이유
+
+SI/SM(공공기관) 프로젝트를 수행하다 보면 배포 때마다 수동으로 파일을 옮기고 설정해야 할 일이 많습니다. 그 과정에서 발생하는 사소한 실수(`Human Error`)가 큰 장애로 이어지기도 하죠.
+
+**내 컴퓨터 환경 자체를 그대로 스냅샷 찍어서 올릴 수는 없을까?**라는 고민이 자연스럽게 도커로 저를 이끌었습니다. 이제는 더 이상 배포 당일 **"제발 한 번에 돌아가게 해주세요"**라고 기도하지 않아도 됩니다.
+
+# 붕어빵 틀(이미지)과 붕어빵(컨테이너)
+
+도커를 처음 접하면 **이미지(`Image`)**와 **컨테이너(`Container`)**라는 용어가 가장 헷갈립니다. 여러 비유가 있지만, 역시 **붕어빵**만큼 와닿는 게 없더라고요.
+
+### 1. **이미지(Image) = 붕어빵 틀**
+- 소스 코드, 라이브러리, 설정값 등 실행에 필요한 모든 것을 담은 **불변의 파일**입니다. 한 번 잘 만들어두면 절대 변하지 않기 때문에, 어디서든 동일한 환경을 복제할 수 있게 됩니다.
+
+### 2. **컨테이너(Container) = 붕어빵**
+- 이미지라는 틀을 사용해 실제로 구워낸 '실행체'입니다. 독립된 공간이라서, 내 컴퓨터 안에 여러 개의 붕어빵(컨테이너)을 만들어도 서로 간섭하지 않습니다.
+
+![](/assets/img/2025-12-26/Docker_Setting(Spring)_1_img_1.png)*[Docker and Container](https://stackoverflow.com/questions/23735149/what-is-the-difference-between-a-docker-image-and-a-container)*
+
+# 설치하기 전에 - WSL2 설치(Windows)
+
+도커를 설치하기 전, `Windows`라면 반드시 거쳐야 할 관문이 있습니다. **`WSL2`** 설치입니다.
+
+- **`WSL2`?** : `Windows Subsystem for Linux 2`의 약자로, **`Windows` 안에서 리눅스 커널을 직접 실행**할 수 있게 해줍니다.
+- **왜 설치해야 하는지?** : 도커 컨테이너는 **리눅스 커널의 격리 기술(`namespaces`, `cgroups`)**을 기반으로 동작합니다. `Windows`는 리눅스와 구조가 완전히 다르기 때문에 도커가 돌아갈 수 없습니다. `Windows` 위에 가상의 리눅스 환경(`WSL2`)을 만들고, 도커가 그 위에서 구동될 수 있게 만드는 것입니다.
+
+![](/assets/img/2025-12-26/Docker_Setting(Spring)_1_img_2.png)*[Docker and WSL2](https://forums.docker.com/t/is-there-a-pictorial-diagram-of-how-wsl-2-docker-docker-desktop-are-related/100071)*
+
+> 쉽게 말해, 도커라는 **앱**을 돌리기 위해, `Windows`라는 집 안에 **리눅스**라는 방을 하나 만드는 과정입니다.
+{: .prompt-info }
+
+### 1. **`WSL2` 설치**
+`PowerShell`을 **관리자 권한**으로 실행한 후 아래 명령어를 입력합니다.
+```powershell
+wsl --install
+# 설치가 완료되면 시스템 재부팅이 필요합니다.
+```
+
+> **가상화를 사용할 수 없습니다** 오류 발생 시 `BIOS` 설정에서 `Virtualization`(가상화) 옵션이 `Enabled`로 되어 있는지 확인합니다. 
+{: .prompt-warning }
+
+이 명령어 하나로 `WSL2` 활성화, 커널 업데이트, `Ubuntu` 설치까지 모두 자동으로 진행됩니다.
+
+### 2. **설치 확인**
+터미널에서 최종 확인을 해봅니다.
+```powershell
+wsl -l -v
+# 실행 결과
+# NAME      STATE      VERSION
+# Ubuntu    Running    2
+```
+
+> 만약 `Ubuntu`가 자동으로 설치되지 않았다면, `wsl --install -d Ubuntu` 명령어로 별도 설치합니다.
+{: .prompt-tip }
+
+# Docker Desktop 설치 (WSL2 연동)
+
+**[Docker 공식 홈페이지](https://www.docker.com/products/docker-desktop/){:target="_blank"}**에서 설치파일을 다운받아 실행합니다.
+
+1. 설치 과정 중 `Use the WSL 2 based engine (recommended)` 체크박스가 나오면 반드시 체크합니다.
+   (지금까지 설치한 `WSL2` 를 `Docker` 의 베이스 엔진으로 사용)
+
+2. 설치 완료 후 `Settings` -> `General` 에서 해당 옵션이 켜져 있는지 확인합니다.
+
+3. `Resources` -> `WSL Integration` 메뉴에서 설치한 `Ubuntu`가 활성화되어 있는지 확인합니다.
+
+4. 최종적으로 터미널에서 확인해봅니다.
+```powershell
+docker --version
+# 출력 예 : Docker version 29.1.2, build 890dcca
+docker run hello-world
+# Hello from Docker! .... 라는 메세지가 보인다면 성공!
+```
+
+# What's next
+- MySQL을 도커 컨테이너로 실행하기
+- Volume 설정으로 데이터 영속성 보장하기

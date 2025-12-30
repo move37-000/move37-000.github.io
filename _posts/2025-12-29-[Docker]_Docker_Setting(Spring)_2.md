@@ -37,12 +37,10 @@ docker run -d `
 > **`3306` 포트가 이미 사용 중이라면(`Bind Address Error`)**
 - 호스트(왼쪽) 포트 번호 변경(`-p 3307:3306`)
 - 외부(`DBeaver` 등)에서는 `3307`로 접속하고, 컨테이너 내부 `MySQL`은 원래대로 `3306`으로 동작합니다.
-{: .prompt-warning }
 
 ![](/assets/img/2025-12-29/Docker_Setting(Spring)_2_img_1.webp)*[Docker HTTP Routing](https://docs.docker.com/guides/traefik/)*
 
-> **포트 포워딩?** 내 PC의 포트와 컨테이너 내부의 포트를 연결하는 **통로**입니다. 지금은 접속을 위해 간단히 설정하고 넘어가지만, 자세한 네트워크 원리는 추후 `docker-compose.yml` 에서 다룰 예정입니다.
-{: .prompt-info }
+> **포트 포워딩?** 외부(내 PC)에서 컨테이너 내부의 서비스에 접속할 수 있도록 **특정 포트끼리 연결해주는 '입구'**의 개념입니다. 자세한 네트워크 원리는 추후 `docker-compose.yml` 에서 다룰 예정입니다.
 
 # 그런데, 컨테이너를 삭제하면 데이터는?
 
@@ -69,7 +67,7 @@ docker run -d `
 
 ![](/assets/img/2025-12-29/Docker_Setting(Spring)_2_img_3.png)*[Docker Use bind mounts](https://docker-docs.uclv.cu/storage/bind-mounts/)*
 
-> **한 줄 요약**: DB 데이터처럼 도커가 알아서 관리하게 두는 게 편하면 **Named Volume**, 내가 직접 폴더를 열어서 파일을 자주 수정해야 한다면 **Bind Mount**
+> 데이터 관리의 주도권을 **도커**에게 맡기고 싶다면 **Named Volume**, 내 로컬 폴더와 직접 동기화하여 자유롭게 파일을 다루고 싶다면 **Bind Mount**
 {: .prompt-info }
 
 # Named Volume 방식을 적용하여 다시 실행하기
@@ -94,7 +92,6 @@ docker run -d `
 - `-v mysql_data:/var/lib/mysql`: `mysql_data`라는 이름의 도커 볼륨을 `MySQL`의 실제 데이터 저장 경로인 `/var/lib/mysql`에 마운트합니다. 이제 컨테이너를 지웠다 다시 깔아도 데이터는 그대로 유지됩니다.
 
 > `docker rm`은 **컨테이너만** 삭제하는 명령어 입니다. 데이터는 볼륨에 저장되어 있으며, 볼륨은 직접 삭제 명령을 내리기 전까지는 영구적으로 보존됩니다.
-{: .prompt-info }
 
 # 생성된 볼륨 확인하기
 

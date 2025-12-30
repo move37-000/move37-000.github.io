@@ -33,6 +33,10 @@ description: >- # used by seo meta and the atom feed
 # E.g. 'https://username.github.io', note that it does not end with a '/'.
 url: "https://move37-000.github.io"
 
+# RSS Feed 
+feed:
+  excerpt_only: true
+
 github:
   username: move37-000 # change to your GitHub username
 

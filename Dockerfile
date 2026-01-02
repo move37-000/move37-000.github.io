@@ -10,17 +10,16 @@ RUN apt-get update && apt-get install -y \
 
 WORKDIR /srv/jekyll
 
-# Jekyll 및 Bundler 설치
-RUN gem install jekyll bundler
-
-# 소스 복사 및 권한 설정
+# 1. 모든 파일(Gemfile, .gemspec 포함)을 먼저 복사
 COPY . .
 
-# Git 보안 설정 및 의존성 설치
-RUN git config --global --add safe.directory /srv/jekyll && \
-    rm -f Gemfile.lock && \
-    bundle lock --add-platform x86_64-linux && \
+# 2. 그 다음 설치 진행
+RUN gem install jekyll bundler && \
     bundle install
+
+# 3. Git 보안 설정 등 나머지 작업
+RUN git config --global --add safe.directory /srv/jekyll && \
+    bundle lock --add-platform x86_64-linux
 
 EXPOSE 4000
 

@@ -83,7 +83,6 @@ docker run -d -p 8080:8080 --name basic-server spring-basic
 ![](/assets/img/2025-12-30/Docker_Setting(Spring)_3_img_2.png)*[Docker Layer Changes](https://docs.docker.com/build/cache/)*
 
 > 이 모든걸 감내할 수 있다면, 그냥 사용하셔도 무방합니다. 하지만 **`build` 속도** 때문에 답답할 겁니다.
-{: .prompt-warning }
 
 # Dockerfile 개선하기 (Multi-stage Build)
 

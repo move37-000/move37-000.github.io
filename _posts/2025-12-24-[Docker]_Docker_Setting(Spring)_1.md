@@ -79,11 +79,8 @@ wsl -l -v
 
 1. 설치 과정 중 `Use the WSL 2 based engine (recommended)` 체크박스가 나오면 반드시 ✅합니다.
    (지금까지 설치한 `WSL2` 를 `Docker` 의 베이스 엔진으로 사용)
-
 2. 설치 완료 후 `Settings` → `General` 에서 해당 옵션이 켜져 있는지 확인합니다.
-
 3. `Resources` → `WSL Integration` 메뉴에서 설치한 `Ubuntu`가 활성화되어 있는지 확인합니다.
-
 4. 최종적으로 터미널에서 확인합니다.
 ```powershell
 docker --version

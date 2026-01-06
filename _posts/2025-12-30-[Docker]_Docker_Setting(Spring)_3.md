@@ -8,10 +8,10 @@ image:
 ---
 
 > 본 포스팅에서는 아래 내용에 대해 소개합니다.
-> - Spring Boot 프로젝트를 실행 가능한 JAR 파일로 빌드하기
-> - Dockerfile을 작성하여 Spring 애플리케이션 이미지 만들기
+> - `Spring Boot` 프로젝트를 실행 가능한 `JAR` 파일로 빌드하기
+> - `Dockerfile`을 작성하여 `Spring` 애플리케이션 이미지 만들기
 > - 생성한 이미지를 컨테이너로 실행하기
-> - Multi-stage Build를 활용한 이미지 최적화 설정
+> - `Multi-stage Build`를 활용한 이미지 최적화 설정
 
 ## 도커 배포의 핵심: Dockerfile
 
@@ -55,7 +55,7 @@ ENTRYPOINT ["java", "-jar", "/app.jar"]
 docker build -t spring-basic .
 
 # 컨테이너 실행
-docker run -d -p 8080:8080 --name basic-server spring-basic
+docker run -d -p 8080:8080 --name spring-app spring-basic
 
 # 브라우저 주소창에 localhost:8080 으로 접속이 되면 성공!
 ```
@@ -64,7 +64,7 @@ docker run -d -p 8080:8080 --name basic-server spring-basic
 
 1. `./gradlew clean build -x test` 로 수정된 소스를 `build` 하고
 2. `build`가 완료되면 `docker build -t spring-basic .` 를 통해 이미지를 만든 다음
-3. `docker run -d -p 8080:8080 --name basic-server spring-basic` 를 실행해 컨테이너를 실행하면 됩니다.
+3. `docker run -d -p 8080:8080 --name spring-app spring-basic` 를 실행해 컨테이너를 실행하면 됩니다.
 
 ## 이 순서를 코드가 수정될 때 마다 실행해야 한다고...?
 
@@ -144,17 +144,17 @@ ENTRYPOINT ["java", "-Xmx512m", "-XX:+UseContainerSupport", "-Dlogging.file.path
 
 1. **`Multi-stage build`**: 빌드(`JDK`)와 실행(`JRE`) 단계를 나누어 최종 이미지 용량 최적화
 2. **`Layer Caching`**: `build.gradle` 등을 소스코드보다 먼저 복사하여 라이브러리가 변하지 않았다면 빌드 시간이 수 초 이내로 단축
-3. **보안(`Non-root User`)**: `appuser`를 생성해 실행함으로써 컨테이너 탈취 시 발생할 수 있는 피해 방지
+3. **보안(`Non-root User`)**: `appuser`를 생성해 실행함으로써 보안 피해 방지
 4. **로그 디렉토리 및 권한 관리**: 
  - `ENV LOG_DIR=/app/logs`로 경로 변수화
  - `chown -R appuser:appgroup /app`을 통해 새로 만든 일반 사용자 계정이 이 폴더에 로그 파일을 쓸 수 있도록 소유권 부여
- - 이 설정이 없으면 `USER appuser`로 전환된 후 로그를 쓰려 할 때 `Permission Denied` 에러가 발생하며 서버가 띄워지지 않습니다.
+ > 이 설정이 없으면 `USER appuser`로 전환된 후 로그를 쓰려 할 때 `Permission Denied` 에러가 발생하며 서버가 띄워지지 않습니다.
 
  ![](/assets/img/2025-12-30/Docker_Setting(Spring)_3_img_3.webp)*[Docker Multi-stage Build](https://labs.iximiuz.com/tutorials/docker-multi-stage-builds)*
 
 > 이 `Dockerfile` 을 통해 이제 명령어 두 가지만 실행하면 됩니다!
  - **`docker build -t spring-basic .`**: 소스 빌드와 이미지 생성을 한 단계로 통합
- - **`docker run -d -p 8080:8080 --name basic-server spring-basic`**: 도커 실행
+ - **`docker run -d -p 8080:8080 --name spring-app spring-basic`**: 도커 실행
 {: .prompt-info }
 
 이제 우리의 **개발환경의 일관성**이 완성되었습니다. 기존 방식은 "내 PC에서는 빌드되는데, 도커 이미지는 왜 안 되지?" 같은 상황이 발생할 수 있었습니다.(내 PC의 `java` 버전과 도커의 `java` 버전이 다를 때 등).

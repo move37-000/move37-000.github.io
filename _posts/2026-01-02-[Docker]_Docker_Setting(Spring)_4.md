@@ -8,14 +8,14 @@ image:
 ---
 
 > 본 포스팅에서는 아래 내용에 대해 소개합니다.
-> - Docker Compose의 개념과 필요성 이해
+> - `Docker Compose`의 개념과 필요성 이해
 > - `docker-compose.yml` 파일을 이용한 멀티 컨테이너 정의
 > - 애플리케이션과 데이터베이스 컨테이너 간 네트워크 연결
 > - 단 한 줄의 명령어로 전체 서비스 기동하기
 
 ## 명령어 두 줄 입력하는 것도 귀찮은데...
 
-지난 포스팅에서 `Spring Boot` 애플리케이션을 최적화된 이미지로 빌드하고 실행하는 데 성공했습니다. 하지만 실제 서비스는 애플리케이션 혼자 돌아가지 않습니다. `MySQL` 같은 DB가 필요하고, 때로는 `Redis` 같은 캐시 서버도 필요하죠.
+지난 포스팅에서 `Spring Boot` 애플리케이션을 최적화된 이미지로 빌드하고 실행하는 데 성공했습니다. 하지만 실제 서비스는 애플리케이션 혼자 돌아가지 않습니다. `MySQL` 같은 `DB`가 필요하고, 때로는 `Redis` 같은 캐시 서버도 필요하죠.
 
 ![](/assets/img/2026-01-02/Docker_Setting(Spring)_4_img_1.webp)*[Docker Applications](https://medium.com/@ansgar.nell/set-up-a-complete-basic-ecosystem-with-angular-spring-boot-docker-google-cloud-git-and-jenkins-b2e062e684e8)*
 
@@ -88,7 +88,7 @@ services:
       MYSQL_ROOT_PASSWORD: ${DB_PROD_ROOT_PASSWORD}
       MYSQL_USER: ${DB_PROD_USER_1}
       MYSQL_PASSWORD: ${DB_PROD_PASSWORD_1}
-    # 운영 환경에서는 포트를 닫겠지만, 로컬 개발 환경에서 확인을 위해 3307 포트로 개방
+    # 운영 환경에서는 포트를 닫지만, 로컬 개발 환경에서 테스트를 위해 3307 포트로 개방
     ports:
       - "3307:3306"
     volumes:
@@ -182,21 +182,22 @@ volumes:
 
 ## 무엇이 왜 적용되었나?
 
-작성된 코드는 단순한 실행을 넘어 프로젝트 진행 중 마주칠 문제들을 미리 방어하고 있습니다.
+작성된 코드는 단순한 실행을 넘어 프로젝트 진행 중 마주칠 문제들을 미리 대비하고 있습니다.
 
 1. **환경 변수 분리 (`.env`)** 
 - `DB` 비밀번호 같은 민감 정보를 코드에 직접 적지 않고 `${VARIABLE}` 형태로 작성 
 - 이는 별도의 `.env` 파일에서 값을 읽어오도록 설정한 것으로, 소스 코드 유출 시 **보안** 유지 가능
+> `.env` 파일은 `Dockerfile`, `docker-compose.yml` 의 경로와 같은 프로젝트 루트 경로에 위치
 2. **로컬 개발과 운영 데이터의 분리 (`db-local`, `db-prod`)**
-- 실제 애플리케이션(`app`)은 `db-prod`와 연결되어 동작하지만, 개발 단계(로컬)와 운영 단계의 프로세스를 분리하기 위해 개발 단계에선 `db-local`을 사용하도록 설계
+- 실제 애플리케이션(`app`)은 `db-prod`와 연결되어 동작하지만, 개발 단계(로컬)와 운영 단계의 프로세스를 분리하기 위해 개발 단계에선 `db-local`을 사용하도록 구성
 - 두 `DB` 모두 컨테이너 내부에서는 `3306` 포트를 쓰지만, 외부 호스트로 노출할 때는 `3306(local)`과 `3307(prod)`로 분리하여 로컬에서 두 컨테이너에 동시 접속 가능
-- **개발 중의 실수(예: DROP TABLE)가 운영 환경용 컨테이너 데이터에 영향을 주지 않도록 격리된 환경을 제공**
+- **개발 중의 실수(예: DROP TABLE)가 운영 환경용 컨테이너 데이터에 영향을 주지 않도록 격리된 환경 구성**
 3. **Healthcheck 와 의존성 제어** 
 - 일반적인 `depends_on`은 컨테이너가 **'실행'**만 되면 다음 컨테이너 실행. 하지만 `DB`는 실행된 후 내부 엔진이 부팅되는 시간이 필요
 - **healthcheck**: `mysqladmin ping`을 통해 `DB`가 진짜로 일할 준비가 되었는지 체크
 - **condition(`service_healthy`)**: `DB`가 건강한 상태(`healthcheck` 를 통과할 경우)일 때만 `Spring App`가 실행되도록 순서 보장
 4. **리소스 제한(`deploy.resources`)**
-- 특정 컨테이너(`DB` 등)가 서버의 자원을 무한정 점유하지 못하도록 <br>CPU 사용량은 50%, 메모리는 512MB 등으로 제한
+- 특정 컨테이너(`DB` 등)가 서버의 자원을 무한정 점유하지 못하도록 CPU 사용량은 50%, 메모리는 512MB 등으로 제한
 5. **네트워크 격리 및 프록시 구성**
 - `Nginx`: 외부 사용자는 80 포트(`Nginx`)로만 진입 가능
 - `Expose`: `Spring App`은 외부로 포트를 직접 열지 않고(`expose: 8080`), 내부 네트워크(`backend-network`) <br>안에서 `Nginx`하고만 통신하도록 격리
@@ -236,7 +237,7 @@ docker-compose up -d --build
 
 스프링은 여전히 `localhost`에서 `DB`를 찾고 있을 것이며(도커망에서는 `docker-compose.yml` 에서 선언된`db-prod`로 찾아야 합니다.), `.env`에서 넘겨준 환경 변수들을 스프링이 어떻게 받아야 하는지 모릅니다.
 
-또한 우리가 설정한 `SPRING_PROFILES_ACTIVE: prod`가 구체적으로 어떤 설정인지도 지정하지 않았습니다.
+또한 우리가 설정한 `SPRING_PROFILES_ACTIVE: prod`가 구체적으로 어떤 설정인지, 브라우저에서 어떻게 `Spring` 으로 진입해야 하는지 모릅니다.
 
 # What's next
 

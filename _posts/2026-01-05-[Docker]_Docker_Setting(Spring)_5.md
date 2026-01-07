@@ -75,11 +75,12 @@ spring:
 
 하지만 `docker-compose.yml`에서 `SPRING_PROFILES_ACTIVE: prod` 라는 환경 변수를 주입하는 순간, **스프링은 내부 설정보다 외부 명령을 우선**하게 됩니다.
 
-결과적으로, 똑같은 코드를 실행하더라도 **어디서 실행하느냐**에 따라 스프링이 알맞은 application 설정을 연결합니다.
+> 결과적으로, 똑같은 코드를 실행하더라도 **어디서 실행하느냐**에 따라 스프링이 알맞은 `application` 설정을 연결합니다.
+{: .prompt-info }
 
 | 구분 | 로컬 개발 환경 (`IDE`) | 도커 배포 환경 (`Container`) |
 | :--- | :--- | :--- |
-| 실행 주체 | `IntelliJ, Eclipse, Gradle` | `Docker Engine (Compose)` |
+| 실행 주체 | `IntelliJ, Eclipse, Gradle` 등 | `Docker Engine (Compose)` |
 | 프로필 결정 | `application.yml` **내부 설정** | `docker-compose.yml` **환경 변수** |
 | 활성 프로필 | `local (Default)` | `prod (Injected)` |
 | 참조 파일 | `application-local.yml` | `application-prod.yml` |

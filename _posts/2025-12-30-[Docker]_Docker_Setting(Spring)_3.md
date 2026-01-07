@@ -142,10 +142,10 @@ EXPOSE 8080
 ENTRYPOINT ["java", "-Xmx512m", "-XX:+UseContainerSupport", "-Dlogging.file.path=${LOG_DIR}", "-jar", "/app/app.jar"]
 ```
 
-1. **`Multi-stage build`**: 빌드(`JDK`)와 실행(`JRE`) 단계를 나누어 최종 이미지 용량 최적화
-2. **`Layer Caching`**: `build.gradle` 등을 소스코드보다 먼저 복사하여 라이브러리가 변하지 않았다면 빌드 시간이 수 초 이내로 단축
-3. **보안(`Non-root User`)**: `appuser`를 생성해 실행함으로써 보안 피해 방지
-4. **로그 디렉토리 및 권한 관리**: 
+1. ✅ **`Multi-stage build`**: 빌드(`JDK`)와 실행(`JRE`) 단계를 나누어 최종 이미지 용량 최적화
+2. ✅ **`Layer Caching`**: `build.gradle` 등을 소스코드보다 먼저 복사하여 라이브러리가 변하지 않았다면 빌드 시간이 수 초 이내로 단축
+3. ✅ **보안(`Non-root User`)**: `appuser`를 생성해 실행함으로써 보안 피해 방지
+4. ✅ **로그 디렉토리 및 권한 관리**: 
  - `ENV LOG_DIR=/app/logs`로 경로 변수화
  - `chown -R appuser:appgroup /app`을 통해 새로 만든 일반 사용자 계정이 이 폴더에 로그 파일을 쓸 수 있도록 소유권 부여
  > 이 설정이 없으면 `USER appuser`로 전환된 후 로그를 쓰려 할 때 `Permission Denied` 에러가 발생하며 서버가 띄워지지 않습니다.

@@ -305,25 +305,26 @@ public class CouponIssueTransactionalService {
 | **Connection Pool** | `HikariCP(max: 50)` |
 
 ### 테스트 결과
-<!-- 여기에 k6 테스트 결과 이미지 삽입 -->
+![](/assets/img/2026-01-14/Portfolio-concurrency-control-1-1.png)*[k6 test]*
 
 ```
 // 테스트 결과 요약
 - 총 요청: 500
-- 성공: ???
-- 실패: ???
-- 평균 응답시간: ???ms
-- 최대 응답시간: ???ms
+- 성공: 13 (2.6%)
+- 실패: 487 (97.4%)
+- 평균 응답시간: 9,040ms
+- 최대 응답시간: 13,610ms
 ```
 
 ### 발견된 문제
 **테스트 중 예상치 못한 에러가 발생했다.**
+> 또한 쿠폰 수량인 100개를 다 채우지도 못했다.
+
+![](/assets/img/2026-01-14/Portfolio-concurrency-control-1-2.png)*[Deadlock]*
 
 ```
 com.mysql.cj.jdbc.exceptions.MySQLTransactionRollbackException:
 Deadlock found when trying to get lock; try restarting transaction
-
-# 또한 쿠폰 수량인 100개를 다 채우지도 못했다.
 ```
 
 🤔
@@ -333,19 +334,18 @@ Deadlock found when trying to get lock; try restarting transaction
 ### Deadlock 발생 원인
 낙관적 락은 **애플리케이션 레벨**의 동시성 제어다. `@Version`은 `UPDATE` 시점에만 검증하고, 그 사이에 발생하는 **`DB` 레벨의 락 경합**은 방지하지 못한다.
 
-### Gap Lock + Insert 충돌
-`InnoDB`는 `REPEATABLE READ` 격리 수준에서 **`Gap Lock`**을 사용한다. 여러 트랜잭션이 동시에 같은 범위를 조회하고 `INSERT` 하면 데드락이 발생할 수 있다.
+### Unique Index + Insert/Update 충돌
+`coupon_issues` 테이블에는 `UK(coupon_id, member_id)` 제약조건이 있다. 여러 트랜잭션이 동시에 `INSERT`와 `UPDATE`를 수행하면 락 획득 순서가 꼬이면서 데드락이 발생한다.
 
 ```
-TX A: SELECT ... WHERE coupon_code = 'firstCome1' (Gap Lock 획득)
-TX B: SELECT ... WHERE coupon_code = 'firstCome1' (Gap Lock 획득)
-TX A: INSERT INTO coupon_issues ... (B의 Gap Lock 대기)
-TX B: INSERT INTO coupon_issues ... (A의 Gap Lock 대기)
+TX A: INSERT INTO coupon_issues (coupon_id=2, member_id=1) → 인덱스 락 획득
+TX B: INSERT INTO coupon_issues (coupon_id=2, member_id=2) → 인덱스 락 획득
+TX A: UPDATE coupon SET issued_quantity=99 WHERE id=2 → B의 락 대기
+TX B: UPDATE coupon SET issued_quantity=99 WHERE id=2 → A의 락 대기
 → Deadlock!
 ```
 
-### Unique Index 와 Insert
-`coupon_issues` 테이블에는 `UK(coupon_id, member_id)` 제약조건이 있다. `INSERT` 시 유니크 인덱스 검증을 위해 잠금이 발생하고, 이것도 데드락의 원인이 된다.
+핵심은 **`INSERT`와 `UPDATE`가 서로 다른 순서로 락을 잡는다**는 점이다. `INSERT`는 `coupon_issues` 테이블을, `UPDATE`는 `coupon` 테이블을 잠그는데, 500개 트랜잭션이 동시에 실행되면 이 순서가 뒤엉켜 교착 상태에 빠진다.
 
 ### 정리: 낙관적 락의 한계
 
@@ -353,27 +353,25 @@ TX B: INSERT INTO coupon_issues ... (A의 Gap Lock 대기)
 | :--- | :--- |
 | `version`만 검증하면 됨 | `DB` 레벨에서 다른 락이 발생 |
 | 충돌 시 깔끔하게 재시도 | `Deadlock`으로 트랜잭션 롤백 |
-| 높은 처리량 | `Gap Lock` 경합으로 성능 저하 |
+| 높은 처리량 | 인덱스 락 경합으로 성능 저하 |
 
 **결론:** 낙관적 락은 **`UPDATE` 충돌**만 감지한다. 같은 트랜잭션 내에서 발생하는 **`INSERT`의 락 경합**은 별개 문제다. 동시 트래픽이 높은 상황에서는 낙관적 락만으로 부족하다.
-
 
 ## 느낀점 및 다음 단계
 
 ### 이번 Phase 에서 배운 것
 
 **JPA 낙관적 락**
-- `@Version`과 `@Lock(OPTIMISTIC)`의 동작 원리
-- 낙관적 락은 `DB` 락이 아닌 애플리케이션 레벨 검증
+- `@Version`은 `UPDATE` 시점에 버전을 비교해 충돌 감지
+- `DB` 락을 사용하지 않아 동시 읽기는 허용하지만, `INSERT` 경합은 막지 못함
 
 **Spring 트랜잭션**
-- `Self-Invocation` 문제와 프록시 동작 원리
-- 트랜잭션 경계와 서비스 분리의 필요성
+- 같은 클래스 내 메서드 호출(`Self-Invocation`)은 프록시를 거치지 않아 트랜잭션 미적용
+- 트랜잭션 경계를 명확히 하려면 서비스 분리 필요
 
-**동시성의 어려움**
-- 이론과 실제는 다르다.
-- 테스트 없이는 문제를 발견할 수 없다.
-- 하나의 문제만 바라봐선 안 된다.
+**동시성 테스트의 중요성**
+- 단위 테스트로는 발견할 수 없는 문제가 부하 테스트에서 드러남
+- 낙관적 락 + `INSERT` 조합에서 예상치 못한 `Deadlock` 발생
 
 ### 다음 단계: Phase 2 - 비관적 락
 
@@ -383,4 +381,4 @@ TX B: INSERT INTO coupon_issues ... (A의 Gap Lock 대기)
 - `@Lock(PESSIMISTIC_WRITE)` 적용
 - `SELECT ... FOR UPDATE`의 동작 원리
 - 낙관적 락과 성능 비교
-- `Deadlock`이 해결되는가?
+- `Deadlock` 해결 여부 검증

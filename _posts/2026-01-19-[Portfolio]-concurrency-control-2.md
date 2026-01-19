@@ -120,7 +120,7 @@ public class CouponIssueService {
         while (retryCount < MAX_RETRY_COUNT) {
             try {
                 return transactionalService.issueCouponWithTransaction(couponCode, memberId);
-            } catch (PessimisticLockingFailureException | CannotAcquireLockException e) {
+            } catch (PessimisticLockingFailureException e) {
                 retryCount++;
 
                 log.warn("비관적 락 획득 실패. 재시도 {}/{} - couponCode: {}, memberId: {}",
@@ -139,6 +139,7 @@ public class CouponIssueService {
                 }
             }
         }
+        
         throw new BusinessException(ErrorCode.COUPON_ISSUE_FAILED);
     }
 }

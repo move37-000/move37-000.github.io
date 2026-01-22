@@ -300,7 +300,7 @@ public class CouponIssueTransactionalService {
 |------|-----|
 | **동시 사용자** | `500명` |
 | **사용자당 요청** | `1회` |
-| **쿠폰 수량** | `1,000개` |
+| **쿠폰 재고** | `1,000개` |
 | **DB** | `MySQL 8.0(InnoDB)` |
 | **Connection Pool** | `HikariCP(max: 50)` |
 
@@ -318,7 +318,7 @@ public class CouponIssueTransactionalService {
 
 ### 발견된 문제
 **테스트 중 예상치 못한 에러가 발생했다.**
-> 또한 쿠폰 수량인 100개를 다 채우지도 못했다.
+> 또한 쿠폰 재고 수 100개를 다 채우지도 못했다.
 
 ![](/assets/img/2026-01-14/Portfolio-concurrency-control-1-2.png)*[Deadlock]*
 

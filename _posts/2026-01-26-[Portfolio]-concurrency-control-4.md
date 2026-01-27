@@ -14,7 +14,7 @@ image:
 1. `Redis DECR`로 재고 차감 (원자적 연산)
 2. 성공 시 `Kafka`로 이벤트 발행
 3. 즉시 응답 반환 (`DB` 저장 안 기다림)
-4. `Kafka Consumer`가 백그라운드에서 `DB` 저장
+4. `Kafka Consumer`가 백그라운드에서 `DB` 저장 
 
 ### Redis 분산 락과 비교
 

@@ -103,49 +103,12 @@ public class RedisScriptConfig {
 }
 ```
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-### 3.3 StockDecreaseResult
+### StockDecreaseResult
 ```java
-@Getter
-public class StockDecreaseResult {
+public record StockDecreaseResult(Status status, long remainingStock) {
 
     public enum Status {
-        SUCCESS,
-        COUPON_NOT_FOUND,
-        OUT_OF_STOCK,
-        DUPLICATE
-    }
-
-    private final Status status;
-    private final long remainingStock;
-
-    private StockDecreaseResult(Status status, long remainingStock) {
-        this.status = status;
-        this.remainingStock = remainingStock;
+        SUCCESS, COUPON_NOT_FOUND, OUT_OF_STOCK, DUPLICATE
     }
 
     public static final StockDecreaseResult COUPON_NOT_FOUND =
@@ -167,8 +130,9 @@ public class StockDecreaseResult {
 }
 ```
 
-### 3.4 CouponStockService
+> record 구현
 
+### CouponStockService
 ```java
 @Slf4j
 @Service
@@ -181,17 +145,31 @@ public class CouponStockService {
     private static final String STOCK_KEY_PREFIX = "coupon:stock:";
     private static final String ISSUED_SET_PREFIX = "coupon:issued:";
 
-    public StockDecreaseResult decreaseStock(String couponCode, Long memberId) {
+    ...
+
+    public boolean tryDecreaseStock(String couponCode, Long memberId) {
         String stockKey = STOCK_KEY_PREFIX + couponCode;
         String issuedKey = ISSUED_SET_PREFIX + couponCode;
 
+        // Lua Script
         Long result = redisTemplate.execute(
                 decreaseStockScript,
                 List.of(stockKey, issuedKey),
                 String.valueOf(memberId)
         );
 
-        return mapResult(result);
+        StockDecreaseResult decreaseResult = mapResult(result);
+
+        if (!decreaseResult.isSuccess()) {
+            log.info("재고 차감 실패 - couponCode: {}, memberId: {}, status: {}",
+                    couponCode, memberId, decreaseResult.status());
+            return false;
+        }
+
+        log.info("재고 차감 성공 - couponCode: {}, memberId: {}, 남은 재고: {}",
+                couponCode, memberId, decreaseResult.remainingStock());
+
+        return true;
     }
 
     private StockDecreaseResult mapResult(Long result) {
@@ -207,40 +185,27 @@ public class CouponStockService {
         return StockDecreaseResult.success(result);
     }
 
-    /**
-     * Kafka 발행 실패 시 롤백
-     */
-    public void rollbackStock(String couponCode, Long memberId) {
-        String stockKey = STOCK_KEY_PREFIX + couponCode;
-        String issuedKey = ISSUED_SET_PREFIX + couponCode;
-
-        redisTemplate.opsForValue().increment(stockKey);
-        redisTemplate.opsForSet().remove(issuedKey, String.valueOf(memberId));
-
-        log.info("Redis 롤백 완료 - couponCode: {}, memberId: {}", couponCode, memberId);
-    }
+    ...
 }
 ```
 
 ---
 
-## 4. Kafka send 실패 처리
-
-Lua 스크립트로 Redis 원자성은 확보했지만, 그 다음 단계인 **Kafka 발행이 실패**하면 어떻게 될까?
+## Kafka send 실패 처리
+`Lua Script`로 `Redis` 원자성은 확보했지만, 그 다음 단계인 `Kafka` **발행이 실패**하면 어떻게 될까?
 
 ```
 1. Lua 스크립트 성공 → Redis에 발급 처리됨
-2. ⚡ Kafka send 실패 (네트워크 오류 등)
+2. Kafka send 실패 (네트워크 오류 등)
 3. Consumer가 메시지를 못 받음 → DB에 저장 안 됨
 
 결과:
-- Redis: 발급됨 ✅
-- DB: 발급 안 됨 ❌
+- Redis: 발급됨
+- DB: 발급 안 됨
 - 데이터 불일치 발생!
 ```
 
-### 해결: Kafka 발행 실패 시 Redis 롤백
-
+### Kafka 발행 실패 시 Redis 롤백
 ```java
 @Slf4j
 @Service
@@ -248,149 +213,180 @@ Lua 스크립트로 Redis 원자성은 확보했지만, 그 다음 단계인 **K
 public class CouponIssueService {
 
     private final CouponStockService stockService;
+    private final MemberRepository memberRepository;
     private final KafkaTemplate<String, CouponIssuedEvent> kafkaTemplate;
 
+    private static final String TOPIC = "coupon-issued";
+
     public CouponIssueResponse issueCoupon(String couponCode, Long memberId) {
-        // 1. Redis 재고 차감 (Lua 스크립트)
-        StockDecreaseResult result = stockService.decreaseStock(couponCode, memberId);
+        memberRepository.findByIdAndStatus(memberId, MemberStatus.ACTIVE)
+                .orElseThrow(() -> new BusinessException(ErrorCode.MEMBER_NOT_FOUND));
 
-        if (!result.isSuccess()) {
-            return CouponIssueResponse.fail(result.getStatus());
-        }
+        // Lua Script
+        boolean success = stockService.tryDecreaseStock(couponCode, memberId);
 
-        // 2. Kafka 발행
+        if (!success) throw new BusinessException(ErrorCode.COUPON_SOLD_OUT);
+
         try {
-            CouponIssuedEvent event = new CouponIssuedEvent(couponCode, memberId);
-            kafkaTemplate.send("coupon-issued", event).get(5, TimeUnit.SECONDS);
-            
-            log.info("쿠폰 발급 이벤트 발행 성공 - couponCode: {}, memberId: {}", 
-                    couponCode, memberId);
-            return CouponIssueResponse.success(result.getRemainingStock());
+            CouponIssuedEvent event = CouponIssuedEvent.builder()
+                    .couponCode(couponCode)
+                    .memberId(memberId)
+                    .requestedAt(LocalDateTime.now())
+                    .build();
 
+            kafkaTemplate.send(TOPIC, couponCode, event)
+                    .get(5, TimeUnit.SECONDS);  // 5초 타임아웃
         } catch (Exception e) {
-            // 3. Kafka 실패 시 Redis 롤백
-            log.error("Kafka 발행 실패, Redis 롤백 - couponCode: {}, memberId: {}", 
-                    couponCode, memberId, e);
-            stockService.rollbackStock(couponCode, memberId);
-            
-            return CouponIssueResponse.fail("일시적인 오류가 발생했습니다. 다시 시도해주세요.");
+            try {
+                // Kafka 실패 시 Redis 롤백
+                log.error("Kafka 발행 실패, Redis 롤백 - couponCode: {}, memberId: {}", couponCode, memberId, e);
+                stockService.rollbackStock(couponCode, memberId);
+                throw new BusinessException(ErrorCode.COUPON_ISSUE_FAILED);
+            } catch (Exception rollbackEx) {
+                log.error("롤백도 실패! 수동 조치 필요 - couponCode: {}, memberId: {}",
+                        couponCode, memberId, rollbackEx);
+            }
+            throw new BusinessException(ErrorCode.COUPON_ISSUE_FAILED);
         }
+
+        return CouponIssueResponse.issued(couponCode, memberId);
     }
+}
+```
+
+### CouponStockService (Redis 롤백 추가)
+```java
+@Slf4j
+@Service
+@RequiredArgsConstructor
+public class CouponStockService {
+
+    ...
+
+    public void rollbackStock(String couponCode, Long memberId) {
+        String stockKey = STOCK_KEY_PREFIX + couponCode;
+        String issuedKey = ISSUED_SET_PREFIX + couponCode;
+
+        // 재고 복구
+        redisTemplate.opsForValue().increment(stockKey);
+
+        // 발급 명단에서 제거
+        redisTemplate.opsForSet().remove(issuedKey, String.valueOf(memberId));
+    }
+
+    ...
 }
 ```
 
 ### 핵심: 동기 방식으로 Kafka 발행 결과 확인
 
 ```java
-// ❌ 비동기 (실패 감지 불가)
+// 비동기 (실패 감지 불가)
 kafkaTemplate.send("coupon-issued", event);
 
-// ✅ 동기 (실패 시 예외 발생)
+// 동기 (실패 시 예외 발생)
 kafkaTemplate.send("coupon-issued", event).get(5, TimeUnit.SECONDS);
 ```
 
-`get()`을 호출하면 Kafka broker의 ack를 기다린다. 실패 시 예외가 발생하므로 롤백 처리가 가능하다.
+`get()`을 호출하면 `Kafka broker`의 `ack`를 기다린다. **실패 시 예외가 발생하므로 롤백 처리가 가능하다.**
 
 ### 흐름도
-
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                     쿠폰 발급 요청                           │
+│                     쿠폰 발급 요청                              │
 └─────────────────────────────────────────────────────────────┘
                               │
                               ▼
 ┌─────────────────────────────────────────────────────────────┐
-│  1. Lua 스크립트 실행 (Redis)                                │
-│     - SADD (발급 명단 등록)                                  │
-│     - 재고 검증                                             │
-│     - DECR (재고 차감)                                      │
+│  1. Lua 스크립트 실행 (Redis)                                   │
+│     - SADD (발급 명단 등록)                                     │
+│     - 재고 검증                                                │
+│     - DECR (재고 차감)                                         │
 └─────────────────────────────────────────────────────────────┘
                               │
                     ┌─────────┴─────────┐
                     │                   │
-                 성공 ✅              실패 ❌
+                   성공                 실패
                     │                   │
                     ▼                   ▼
 ┌──────────────────────────┐    ┌──────────────────────┐
-│  2. Kafka 발행 시도       │    │  실패 응답 반환       │
-│     .get(5, SECONDS)     │    │  (재고 소진/중복 등)  │
+│  2. Kafka 발행 시도         │   │  실패 응답 반환          │
+│     .get(5, SECONDS)     │    │  (재고 소진/중복 등)     │
 └──────────────────────────┘    └──────────────────────┘
                     │
-          ┌────────┴────────┐
-          │                 │
-       성공 ✅            실패 ❌
-          │                 │
-          ▼                 ▼
+           ┌────────┴────────┐
+           │                 │
+          성공               실패 
+           │                 │
+           ▼                 ▼
 ┌─────────────────┐  ┌─────────────────────────┐
-│  성공 응답 반환  │  │  3. Redis 롤백           │
-│                 │  │     - INCR (재고 복구)   │
-│                 │  │     - SREM (명단 제거)   │
-│                 │  │  4. 실패 응답 반환       │
+│  성공 응답 반환     │ │  3. Redis 롤백            │
+│                 │  │     - INCR (재고 복구)     │
+│                 │  │     - SREM (명단 제거)     │
+│                 │  │  4. 실패 응답 반환          │
 └─────────────────┘  └─────────────────────────┘
 ```
 
----
+> 이는 데이터 정합성을 증가시키지만, 트래픽이 많으면 `.get()`으로 인한 **50ms 대기**가 치명적이다.
 
-## 5. Consumer 멱등성 처리
+> 이를 개선하기 위해 추후 비동기 + Transactional Outbox 패턴 적용 예정
 
-Kafka Consumer가 같은 메시지를 **중복 처리**할 수 있는 상황이 있다.
+## Consumer 멱등성 처리
+
+`Kafka Consumer`가 같은 메시지를 **중복 처리**할 수 있는 상황이 있다.
 
 ### 중복 발생 시나리오
-
 ```
 1. Consumer가 메시지 수신
 2. DB INSERT 성공
-3. ⚡ offset commit 전에 Consumer 재시작
+3. offset commit 전에 Consumer 재시작
 4. 같은 메시지 다시 수신
 5. DB INSERT 또 시도 → 중복 발급!
 ```
 
-### 해결: INSERT 전 존재 여부 확인
-
+### INSERT 전 존재 여부 확인
 ```java
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class CouponIssueConsumer {
 
+    private final CouponRepository couponRepository;
     private final CouponIssueRepository couponIssueRepository;
 
-    @KafkaListener(topics = "coupon-issued", groupId = "coupon-consumer")
-    public void consume(CouponIssuedEvent event) {
-        String couponCode = event.getCouponCode();
-        Long memberId = event.getMemberId();
+    private static final int COUPON_EXPIRE_DAYS = 30;
 
-        // 멱등성 체크: 이미 발급된 건인지 확인
-        if (couponIssueRepository.existsByCouponCodeAndMemberId(couponCode, memberId)) {
-            log.info("이미 처리된 발급 건 (멱등성) - couponCode: {}, memberId: {}", 
-                    couponCode, memberId);
+    @KafkaListener(topics = "coupon-issued", groupId = "coupon-service")
+    @Transactional
+    public void handleCouponIssued(CouponIssuedEvent event) {
+        // 멱등성 체크에 couponId 필요
+        Coupon coupon = couponRepository.findByCouponCode(event.getCouponCode())
+                .orElseThrow(() -> new BusinessException(ErrorCode.COUPON_NOT_FOUND));
+
+        // 멱등성 체크
+        if (couponIssueRepository.existsByCouponIdAndMemberId(coupon.getId(), event.getMemberId())) {
+            log.info("이미 처리된 메시지, 스킵 - couponCode: {}, memberId: {}",
+                    event.getCouponCode(), event.getMemberId());
             return;
         }
 
-        // DB 저장
-        CouponIssue couponIssue = CouponIssue.builder()
-                .couponCode(couponCode)
-                .memberId(memberId)
-                .issuedAt(LocalDateTime.now())
-                .build();
+        ...
 
-        couponIssueRepository.save(couponIssue);
-        log.info("쿠폰 발급 완료 - couponCode: {}, memberId: {}", couponCode, memberId);
     }
 }
 ```
 
 ### Repository
-
 ```java
 public interface CouponIssueRepository extends JpaRepository<CouponIssue, Long> {
     
-    boolean existsByCouponCodeAndMemberId(String couponCode, Long memberId);
+    ...
+
+    boolean existsByCouponCodeAndMemberId(Long couponCode, Long memberId);
 }
 ```
 
 ### 왜 SELECT 후 INSERT인가?
-
 ```
 방법 1: UNIQUE 제약조건만 의존
 - INSERT 시도 → 중복이면 예외 발생 → 예외 처리
@@ -405,37 +401,42 @@ public interface CouponIssueRepository extends JpaRepository<CouponIssue, Long> 
 - 장점: 한 번의 쿼리로 처리
 ```
 
-SELECT 후 INSERT 방식은 **명시적이고 DB 독립적**이라는 장점이 있다. 물론 UNIQUE 제약조건도 최후의 안전장치로 함께 설정한다.
+> 현재 프로젝트의 DB 가 MySQL 이지만 의도를 확고하게 하기 위해 방법 2 적용
+
+`SELECT` 후 `INSERT` 방식은 **명시적이고 DB 독립적**이라는 장점이 있다. 물론 `UNIQUE` 제약조건도 최후의 안전장치로 함께 설정한다.
 
 ```java
 @Entity
 @Table(
-    uniqueConstraints = @UniqueConstraint(
-        columnNames = {"coupon_code", "member_id"}
-    )
+    name = "coupon_issues"
+        , uniqueConstraints = {
+                @UniqueConstraint(
+                        name = "uk_coupon_member"
+                        , columnNames = {"coupon_id", "member_id"}
+                )
+        }
+    ...
 )
 public class CouponIssue {
-    // ...
+    ...
 }
 ```
 
----
-
-## 6. 전체 아키텍처
+## 전체 아키텍처
 
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
 │                            API Server                               │
 │                                                                     │
-│  ┌─────────────┐    ┌─────────────────┐    ┌──────────────────┐    │
-│  │   Request   │───►│  Lua Script     │───►│  Kafka send()    │    │
-│  │             │    │  (Redis 원자적) │    │  .get() 동기     │    │
-│  └─────────────┘    └─────────────────┘    └──────────────────┘    │
+│  ┌─────────────┐    ┌─────────────────┐    ┌──────────────────┐     │
+│  │   Request   │───►│  Lua Script     │───►│  Kafka send()    │     │
+│  │             │    │  (Redis 원자적)   │    │  .get() 동기      │     │
+│  └─────────────┘    └─────────────────┘    └──────────────────┘     │
 │                              │                      │               │
-│                         실패 시 return         실패 시              │
+│                         실패 시 return             실패 시              │
 │                                                     │               │
 │                                              ┌──────▼──────┐        │
-│                                              │ Redis 롤백  │        │
+│                                              │ Redis 롤백   │        │
 │                                              │ INCR + SREM │        │
 │                                              └─────────────┘        │
 └─────────────────────────────────────────────────────────────────────┘
@@ -451,36 +452,25 @@ public class CouponIssue {
 ┌─────────────────────────────────────────────────────────────────────┐
 │                           Consumer                                  │
 │                                                                     │
-│  ┌───────────────────┐    ┌─────────────────┐    ┌──────────────┐  │
-│  │  메시지 수신       │───►│  멱등성 체크     │───►│  DB INSERT   │  │
-│  │                   │    │  (SELECT 존재)  │    │              │  │
-│  └───────────────────┘    └─────────────────┘    └──────────────┘  │
+│  ┌───────────────────┐    ┌─────────────────┐    ┌──────────────┐   │
+│  │  메시지 수신         │───►│  멱등성 체크       │───►│  DB INSERT   │   │
+│  │                   │    │  (SELECT 존재)    │   │              │   │
+│  └───────────────────┘    └─────────────────┘    └──────────────┘   │
 │                                   │                                 │
-│                              이미 존재 시                           │
+│                              이미 존재 시                              │
 │                                   │                                 │
 │                                   ▼                                 │
-│                           ┌─────────────┐                          │
-│                           │    SKIP     │                          │
-│                           └─────────────┘                          │
+│                           ┌─────────────┐                           │
+│                           │    SKIP     │                           │
+│                           └─────────────┘                           │
 └─────────────────────────────────────────────────────────────────────┘
 ```
 
----
+## 느낀점
 
-## 7. 기존 방식 vs 개선된 방식
+### 이번 Phase에서 배운 것
 
-| 항목 | 기존 | 개선 후 |
-|------|------|--------|
-| Redis 원자성 | ❌ SADD, DECR 분리 | ✅ Lua 스크립트로 원자적 |
-| Kafka 실패 처리 | ❌ 없음 (불일치 발생) | ✅ 롤백으로 일관성 유지 |
-| Consumer 중복 | ❌ 중복 INSERT 가능 | ✅ 멱등성 체크로 방지 |
-| 장애 복구 | ❌ 수동 복구 필요 | ✅ 자동 롤백/스킵 |
-
----
-
-## 8. 정리
-
-이번 Phase에서 데이터 정합성을 위한 세 가지 안전장치를 구현했다.
+이번 `Phase`에서 데이터 정합성을 위한 세 가지 안전장치를 구현했다.
 
 | 계층 | 해결책 | 역할 |
 |------|--------|------|
@@ -488,12 +478,21 @@ public class CouponIssue {
 | Kafka 발행 | 동기 send + 롤백 | 발행 실패 시 Redis 상태 복구 |
 | Kafka 소비 | 멱등성 체크 | 중복 메시지 안전하게 무시 |
 
+이러한 안전장치를 통해
+
+| 항목 | 기존 | 개선 후 |
+| :--- | :--- | :--- |
+| **Redis 원자성** | SADD, DECR 분리 | **Lua 스크립트로 원자적** |
+| **Kafka 실패 처리** | 없음 (불일치 발생) | **롤백으로 일관성 유지** |
+| **Consumer 중복** | 중복 INSERT 가능 | **멱등성 체크로 방지** |
+| **장애 복구** | 수동 복구 필요 | **자동 롤백/스킵** |
+
+**데이터 정합성을 개선시켰다.**
+
+### 다음 단계: Phase 5 - 데이터 정합성 강화 - DLQ
+
 **아직 남은 문제:**
-- Consumer 재시도 실패 시 처리 (DLQ)
-- Redis ↔ DB 정합성 검증 (Reconciliation)
+- `Consumer` 재시도 실패 시 처리 (`DLQ`)
+- `Redis ↔ DB` 정합성 검증 (`Reconciliation`)
 
-다음 포스팅에서 DLQ(Dead Letter Queue)를 통한 실패 메시지 관리를 다룬다.
-
----
-
-👉 다음: [동시성 제어 #6] DLQ를 활용한 실패 메시지 관리
+다음 포스팅에서 `DLQ(Dead Letter Queue)`를 통한 실패 메시지 관리를 다룬다.

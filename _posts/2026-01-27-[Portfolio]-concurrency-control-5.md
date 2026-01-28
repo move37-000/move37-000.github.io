@@ -1,8 +1,9 @@
 ---
-title: "[동시성 제어 #5] 데이터 정합성 강화 - Lua 스크립트"
-date: 2025-01-27
+title: 동시성 제어 - 5. 데이터 정합성 강화 - Lua 스크립트
+date: 2026-01-27
 categories: [Spring, Project]
-tags: [redis, lua, atomic, concurrency]
+tags: [spring-boot, redis, kafka, async, concurrency]
+image: 
 ---
 
 # 동시성 제어 #5 - 데이터 정합성 강화: Lua 스크립트

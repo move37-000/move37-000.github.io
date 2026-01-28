@@ -6,11 +6,10 @@ tags: [spring-boot, redis, kafka, async, concurrency]
 image: 
 ---
 
-# 동시성 제어 #5 - 데이터 정합성 강화: Lua 스크립트 + Kafka 안정성
+## 동시성 제어 #5 - 데이터 정합성 강화: Lua 스크립트 + Kafka 안정성
 
-## 1. 이전 Phase의 문제점
-
-Phase 4에서 Redis DECR + Kafka로 성능을 개선했지만, 원자성 문제가 남아있었다.
+### 이전 Phase의 문제점
+`Phase 4` 에서 `Redis DECR + Kafka`로 성능을 개선했지만, 원자성 문제가 남아있었다.
 
 ```java
 // 기존 코드 (CouponStockService)
@@ -19,27 +18,23 @@ Long remain = redisTemplate.opsForValue().decrement(stockKey);    // 2. 재고 �
 ```
 
 ### 문제 시나리오
-
 ```
-1. SADD 성공 → "123" 발급 명단에 등록됨
-2. ⚡ 서버 장애 발생
-3. DECR 실행 안 됨 → 재고 안 줄어듦
+1. SADD(add) 성공 → memberId:123 발급 명단에 등록됨
+2. 서버 장애 발생
+3. DECR(decrement) 실행 안 됨 → 재고 안 줄어듦
 
 결과:
-- 회원 123: 발급 명단에 있음 (다시 요청해도 "중복"으로 거절)
+- memberId 123: 발급 명단에 있음 (다시 요청해도 중복으로 거절)
 - 재고: 100개 그대로 (차감 안 됨)
 - 쿠폰: 실제로 못 받음
 ```
 
-두 개의 Redis 명령어가 **별개로 실행**되기 때문에 중간에 장애가 발생하면 데이터 불일치가 생긴다.
+두 개의 `Redis` 명령어가 **별개로 실행**되기 때문에 중간에 장애가 발생하면 데이터 불일치가 생긴다.
 
----
+## Lua Script
 
-## 2. 해결책: Lua 스크립트
-
-### Lua 스크립트란?
-
-Redis에 내장된 Lua 인터프리터를 활용해 **여러 명령어를 하나의 원자적 연산**으로 실행하는 방법이다.
+### Lua Script?
+`Redis`에 내장된 `Lua` 인터프리터를 활용해 **여러 명령어를 하나의 원자적 연산**으로 실행하는 방법이다.
 
 ```
 일반 명령어:

@@ -606,10 +606,8 @@ Consumer 처리 실패 → 재시도 → 또 실패 → 재시도 → ...
 | 1 | **Lua 스크립트** | Redis 연산 원자화 |
 | 2 | **Kafka send 실패 처리** | 실패 시 Redis 롤백 |
 | 3 | **Consumer 멱등성** | 중복 메시지 처리 방지 |
-| 4 | **DLQ (Dead Letter Queue)** | 실패 메시지 격리 |
 
 **다룰 내용:**
 - `Lua` 스크립트로 중복 체크 + 재고 차감 원자화
 - `Kafka send` 실패 시 `Redis` 롤백 처리
 - `Consumer`에서 처리 완료된 메시지 필터링
-- 반복 실패 메시지를 `DLQ`로 이동

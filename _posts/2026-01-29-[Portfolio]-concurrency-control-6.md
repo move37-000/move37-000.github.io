@@ -422,5 +422,6 @@ public void handleCouponIssued(CouponIssuedEvent event) {
 
 ### 아직 남은 것
 - `Redis ↔ DB` 정합성 검증 (`Reconciliation Batch`)
+- **비동기 전환**
 
 다음 포스팅에서 `Reconciliation Batch`를 통한 정합성 검증을 다룬다.

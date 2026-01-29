@@ -189,8 +189,6 @@ public class CouponStockService {
 }
 ```
 
----
-
 ## Kafka send 실패 처리
 `Lua Script`로 `Redis` 원자성은 확보했지만, 그 다음 단계인 `Kafka` **발행이 실패**하면 어떻게 될까?
 
@@ -253,6 +251,10 @@ public class CouponIssueService {
     }
 }
 ```
+
+> `rollbackStock` 마저 실패하면 `Redis`와 `DB`의 **불일치가 확정된다.**
+
+> 이를 대응하기 위해 `Reconciliation Batch` 로직이 **반드시 필요하다.**
 
 ### CouponStockService (Redis 롤백 추가)
 ```java
@@ -329,8 +331,6 @@ kafkaTemplate.send("coupon-issued", event).get(5, TimeUnit.SECONDS);
 
 > 이는 데이터 정합성을 증가시키지만, 트래픽이 많으면 `.get()`으로 인한 **50ms 대기**가 치명적이다.
 
-> 이를 개선하기 위해 추후 비동기 + Transactional Outbox 패턴 적용 예정
-
 ## Consumer 멱등성 처리
 
 `Kafka Consumer`가 같은 메시지를 **중복 처리**할 수 있는 상황이 있다.
@@ -376,6 +376,8 @@ public class CouponIssueConsumer {
 }
 ```
 
+> `Select-then-Insert` 사이의 찰나에 다른 컨슈머 쓰레드가 개입할 수 있는 `Race Condition`**이 존재한다.**
+
 ### Repository
 ```java
 public interface CouponIssueRepository extends JpaRepository<CouponIssue, Long> {
@@ -403,7 +405,7 @@ public interface CouponIssueRepository extends JpaRepository<CouponIssue, Long> 
 
 > 현재 프로젝트의 DB 가 MySQL 이지만 의도를 확고하게 하기 위해 방법 2 적용
 
-`SELECT` 후 `INSERT` 방식은 **명시적이고 DB 독립적**이라는 장점이 있다. 물론 `UNIQUE` 제약조건도 최후의 안전장치로 함께 설정한다.
+`SELECT` 후 `INSERT` 방식은 **명시적이고 DB 독립적**이라는 장점이 있다. 하지만 `Race Condition` 을 대비하기 위해 `UNIQUE` 제약조건도 최후의 안전장치로 함께 설정한다.
 
 ```java
 @Entity
@@ -473,7 +475,7 @@ public class CouponIssue {
 이번 `Phase`에서 데이터 정합성을 위한 세 가지 안전장치를 구현했다.
 
 | 계층 | 해결책 | 역할 |
-|------|--------|------|
+| :--- | :--- | :--- |
 | Redis | Lua 스크립트 | 재고 차감 + 중복 체크 원자적 처리 |
 | Kafka 발행 | 동기 send + 롤백 | 발행 실패 시 Redis 상태 복구 |
 | Kafka 소비 | 멱등성 체크 | 중복 메시지 안전하게 무시 |
@@ -489,10 +491,19 @@ public class CouponIssue {
 
 **데이터 정합성을 개선시켰다.**
 
+### 하지만?
+`.get()`을 활용한 **동기 전송과 롤백은 데이터 정합성을 보장하는 확실한 방법이지만,** 선착순 이벤트와 같은 고트래픽 환경에서는 **'양날의 검'** 이다.
+- 장점: `Kafka` 브로커에 메시지가 안전하게 안착되었음을 보장하며, **실패 시 즉각적인** `Redis` **롤백이 가능**
+- 단점: 응답을 기다리는 동안 `WAS` **스레드가 차단(**`Blocking`**)**되어, **스레드 풀 고갈 발생 가능**
+
+처음에는 `DB`와 메시지 큐의 원자성을 위해 `Transactional Outbox` 패턴도 고려했다. 하지만 `Redis`를 메인 저장소로 사용하는 현재 구조에서 `DB` 트랜잭션을 추가하는 것은 **성능상 이점이 크지 않다고 판단했다.**
+
+선착순 시스템의 핵심은 **'빠른 응답과 가용성'**이다. 실시간성 정합성을 위해 사용자를 대기시키는 대신, **일단 빠르게 이벤트를 처리하고 사후에 데이터를 맞추는 전략**으로 선회하기로 했다.
+
 ### 다음 단계: Phase 5 - 데이터 정합성 강화 - DLQ
 
 **아직 남은 문제:**
 - `Consumer` 재시도 실패 시 처리 (`DLQ`)
-- `Redis ↔ DB` 정합성 검증 (`Reconciliation`)
+- `Redis ↔ DB` 정합성 검증 (`Reconciliation Batch`)
 
 다음 포스팅에서 `DLQ(Dead Letter Queue)`를 통한 실패 메시지 관리를 다룬다.

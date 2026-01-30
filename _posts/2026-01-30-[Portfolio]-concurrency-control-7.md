@@ -13,7 +13,7 @@ image:
 
 ```java
 // 기존 코드 - 동기 방식
-kafkaTemplate.send("coupon-issued", event).get(5, TimeUnit.SECONDS);
+kafkaTemplate.send("coupon-issued", couponCode, event).get(5, TimeUnit.SECONDS);
 ```
 
 `.get()`을 사용한 동기 전송은 **데이터 정합성을 보장하는 확실한 방법**이지만, 고트래픽 환경에서는 **'양날의 검'**이다.
@@ -67,7 +67,7 @@ public class CouponIssueService {
         
         ...
 
-        kafkaTemplate.send("coupon-issued", event)
+        kafkaTemplate.send("coupon-issued", couponCode, event)
                 .whenComplete((result, ex) -> {
                     if (ex != null) {
                         log.error("Kafka 발행 실패 - couponCode: {}, memberId: {}, error: {}", couponCode, memberId, ex.getMessage());
@@ -272,31 +272,6 @@ public void updateIssuedQuantity(int quantity) {
         this.issuedQuantity = quantity;
 }
 ```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 ## 왜 발급 수량을 Batch에서 처리하는가?
 기존에 주석 처리했던 코드가 있었다.
 
@@ -308,60 +283,29 @@ public void updateIssuedQuantity(int quantity) {
 
 
 ### Consumer에서 처리하면?
-
 ```
 Consumer 1: SELECT issued_quantity → 50
 Consumer 2: SELECT issued_quantity → 50
 Consumer 1: UPDATE issued_quantity = 51
-Consumer 2: UPDATE issued_quantity = 51  ← 52여야 하는데!
+Consumer 2: UPDATE issued_quantity = 51  ← 52여야 함!
 ```
 
 **동시성 이슈 발생.** 락을 걸면 해결되지만, 트래픽 몰릴 때 성능이 급감한다.
 
 ### Batch에서 처리하면?
-
 ```java
-long actualCount = couponIssueRepository.countByCouponId(coupon.getId());
+int actualCount = couponIssueRepository.countByCouponId(coupon.getId());
 coupon.updateIssuedQuantity(actualCount);
 ```
 
 **DB에서 실제 건수를 COUNT** → 동시성 이슈 없음.
 
 | 방식 | 장점 | 단점 |
-|------|------|------|
+| :--- | :--- | :--- |
 | Consumer + 락 | 실시간 | 성능 저하 |
 | **Batch + COUNT** | 동시성 이슈 없음 | 실시간 아님 |
 
-**실무에서도 통계성 데이터는 배치로 처리한다.**
-
----
-
-## 5. 정합성 검증 범위
-
-### 검증하는 케이스
-
-| 상황 | 검증 |
-|------|------|
-| Redis ✅, DB ❌ | 불일치 → 복구 대상 |
-
-### 검증하지 않는 케이스
-
-| 상황 | 이유 |
-|------|------|
-| Redis ❌, DB ✅ | 발생 불가능 |
-
-**Redis를 거치지 않으면 Kafka 발행 자체가 안 되고, Kafka 없으면 DB 저장이 불가능**하기 때문이다.
-
-```
-Redis 차감 → Kafka 발행 → Consumer DB 저장
-    ↑
-  여기를 안 거치면 뒤로 못 감
-```
-
----
-
-## 6. 실행 흐름 정리
-
+## 실행 흐름 정리
 ```
 ┌─────────────────────────────────────────────────────────────────┐
 │  Reconciliation Batch (5분마다)                                  │
@@ -378,40 +322,26 @@ Redis 차감 → Kafka 발행 → Consumer DB 저장
 └─────────────────────────────────────────────────────────────────┘
 ```
 
----
-
-## 7. 정리
-
-이번 Phase에서 비동기 전환과 Reconciliation Batch를 구현했다.
+## 정리
+이번 `Phase`에서 비동기 전환과 `Reconciliation Batch`를 구현했다.
 
 ### 변경 사항
 
 | 항목 | Before | After |
-|------|--------|-------|
-| Kafka 발행 | `.get()` 동기 | 비동기 + 콜백 |
-| 정합성 검증 | 없음 | Batch로 주기적 검증 |
-| 발급 수량 통계 | 주석 처리 | Batch에서 COUNT |
+| :--- | :--- | :--- |
+| Kafka 발행 | `.get()` 동기 | **비동기 + 콜백** |
+| 정합성 검증 | 없음 | **Batch로 주기적 검증** |
+| 발급 수량 통계 | 주석 처리 | **Batch에서 COUNT** |
 
 ### 3단계 방어 체계
 
 | Layer | 역할 | 감지 시점 |
-|-------|------|----------|
-| 콜백 | Kafka 발행 실패 | 즉시 |
-| DLQ | Consumer 처리 실패 | 즉시 |
+| :--- | :--- | :--- |
+| 콜백 | `Kafka` 발행 실패 | 즉시 |
+| `DLQ` | `Consumer` 처리 실패 | 즉시 |
 | **Batch** | 모든 케이스 (최후 안전망) | 주기적 |
 
-### 파일 구조
+### 아직 남은 것
+- 트래픽을 대용량으로 늘려서 테스트해보기
 
-```
-application/coupon/
-├── dto/
-│   └── ReconciliationResult.java
-├── service/
-│   └── ReconciliationService.java
-└── scheduler/
-    └── ReconciliationScheduler.java
-```
-
----
-
-👉 다음: [동시성 제어 #8] Kafka 파티션 확장 - 대량 트래픽 처리
+다음 포스팅에서 `Kafka` 파티션 확장을 통하여 대량 트래픽을 테스트해본다.

@@ -87,6 +87,8 @@ return TopicBuilder.name("coupon-issued")
         .build();
 ```
 
+`Partition` **수와** `Consumer` **수가 일치해야 노는** `Consumer` **가 없다.**
+
 ### 자동 생성 비활성화가 필요한 이유
 `Consumer`가 먼저 연결하면 **파티션 1개로 토픽이 자동 생성**된다. `NewTopic Bean`보다 `Consumer` 연결이 먼저 발생하기 때문이다.
 
@@ -121,7 +123,7 @@ partitions assigned: [coupon-issued-1]  // Consumer 2
 partitions assigned: [coupon-issued-2]  // Consumer 3
 ```
 
-![](/assets/img/2026-02-02/Portfolio-concurrency-control-8-1.png)
+![파티션 할당 로그](/assets/img/2026-02-02/Portfolio-concurrency-control-8-1.png)
 
 `3개`의 `Consumer`가 각각 다른 파티션을 담당한다.
 
@@ -179,7 +181,7 @@ coupon-issued:1:0
 coupon-issued:2:0  
 ```
 
-![](/assets/img/2026-02-02/Portfolio-concurrency-control-8-2.png)
+![Sticky Partitioner](/assets/img/2026-02-02/Portfolio-concurrency-control-8-2.png)
 
 ### 원인: Sticky Partitioner (기본값)
 
@@ -191,7 +193,8 @@ Sticky Partitioner:
 - 네트워크 효율 좋음
 - 메시지가 적으면 한 파티션에 몰림
 ```
-### KafkaConfig
+
+### KafkaConfig - RoundRobin 적용
 ```java
 ...
 
@@ -208,7 +211,11 @@ Sticky Partitioner:
 
 ```
 
-![](/assets/img/2026-02-02/Portfolio-concurrency-control-8-3.png)
+`RoundRobin` 방식 적용 시 **메시지 순서 보장이 안 된다.**
+
+> 하지만 `Redis` 에서 이미 순번을 처리하므로 상관없다.
+
+![RoundRobin Partitioner](/assets/img/2026-02-02/Portfolio-concurrency-control-8-3.png)
 
 ### Partitioner 비교
 
@@ -229,6 +236,26 @@ Sticky Partitioner:
 
 **파티션 수 ≥ Consumer 수**여야 모든 `Consumer`가 일을 할 수 있다.
 
+## 실시간 리밸런싱(Real-time Rebalancing)
+실제 운영 환경에서는 서비스 중단 없이 가용성을 유지해야 하므로, 현 방식처럼 서버를 내리고 토픽을 삭제하는 방식 대신 **실시간 리밸런싱**을 사용한다.
+
+- **동작 원리**: 서비스 운영 중에 `Kafka CLI`로 파티션 수를 늘리면, `Kafka` 브로커가 이를 감지하고 현재 연결된 `Consumer`들에게 파티션 소유권을 즉시 재배분(`Rebalancing`) 한다.
+- **장점**: 트래픽이 몰리는 상황에서도 서버 중단 없이 처리량을 유연하게 확장(`Scale-out`)할 수 있으며, `Kubernetes` 같은 환경에서 `Consumer Replica`를 늘리는 것만으로도 즉각적인 병렬 처리가 가능해진다.
+- **고민할 점**: 리밸런싱이 일어나는 아주 짧은 순간 동안 `Consumer`의 읽기가 일시 정지(`Stop-the-world`)되거나 메시지가 중복 처리될 위험이 있다. 따라서 실무에서는 `DB` 멱등성 설계와 `Consumer Lag` 모니터링을 병행하여 정합성을 유지한다
+
+> 이 프로젝트는 로컬 개발 환경에서 파티션 구조의 변화에 따른 동시성 제어 메커니즘을 명확히 확인하는 데 목적이 있으므로, 데이터 초기화 후 재구성하는 방식을 택했다.
+
+### 로컬에서 사용한 토픽 삭제, 확인
+```powershell
+# 1. 기존 토픽 삭제 (데이터 초기화)
+docker exec -it kafka kafka-topics --bootstrap-server localhost:9092 --delete --topic coupon-issued
+
+# 2. 앱 재시작 후 테스트 진행 (KafkaConfig의 NewTopic 빈이 파티션 3개로 자동 생성)
+
+# 3. 파티션별 오프셋(데이터 쌓인 양) 확인
+docker exec -it kafka kafka-run-class kafka.tools.GetOffsetShell --broker-list localhost:9092 --topic coupon-issued
+```
+
 ### 주의사항
 - 파티션 수는 **늘릴 수 있지만 줄일 수는 없다**
 - 줄이려면 토픽 삭제 후 재생성 필요
@@ -244,12 +271,11 @@ Sticky Partitioner:
 | 파티션 | `1개 → 3개` |
 | Consumer | `1개 → 3개` |
 | 토픽 생성 | `KafkaAdmin + NewTopic Bean` |
-| 자동 생성 | **비활성화** |
 
 ### 배운 점
 - `NewTopic Bean`만으로는 부족하고 `KafkaAdmin`이 필요하다
 - `Consumer` 자동 토픽 생성을 **비활성화**해야 원하는 파티션 수로 생성된다
-- 파티션 확장은 `API` **응답이 아닌 `Consumer` **처리량**에 영향을 준다
+- 파티션 확장은 `API` **응답이 아닌** `Consumer` **처리량**에 영향을 준다
 - 파티션 수는 늘릴 수 있지만 **줄일 수는 없다** (삭제 후 재생성 필요)
 - 기본 `Partitioner`는 `Sticky`라서 소량 메시지는 한 파티션에 몰릴 수 있다
 
@@ -284,4 +310,4 @@ Sticky Partitioner:
 └─────────────────────────────────────────────────────────────────┘
 ```
 
-이것으로 선착순 쿠폰 발급 시스템의 구현을 마무리한다.
+다음 포스팅에서 그동안의 프로젝트 정리를 한다.

@@ -115,10 +115,10 @@ public record StockDecreaseResult(Status status, long remainingStock) {
             new StockDecreaseResult(Status.COUPON_NOT_FOUND, -1);
 
     public static final StockDecreaseResult OUT_OF_STOCK =
-            new StockDecreaseResult(Status.OUT_OF_STOCK, 0);
+            new StockDecreaseResult(Status.OUT_OF_STOCK, -2);
 
     public static final StockDecreaseResult DUPLICATE =
-            new StockDecreaseResult(Status.DUPLICATE, -1);
+            new StockDecreaseResult(Status.DUPLICATE, -3);
 
     public static StockDecreaseResult success(long remainingStock) {
         return new StockDecreaseResult(Status.SUCCESS, remainingStock);

@@ -123,7 +123,7 @@ partitions assigned: [coupon-issued-1]  // Consumer 2
 partitions assigned: [coupon-issued-2]  // Consumer 3
 ```
 
-![파티션 할당 로그](/assets/img/2026-02-02/Portfolio-concurrency-control-8-1.png)
+![파티션 할당 로그](/assets/img/portfolio/lab/concurrency-control/concurrency-control-8/Portfolio-concurrency-control-8-1.png)
 
 `3개`의 `Consumer`가 각각 다른 파티션을 담당한다.
 
@@ -181,7 +181,7 @@ coupon-issued:1:0
 coupon-issued:2:0  
 ```
 
-![Sticky Partitioner](/assets/img/2026-02-02/Portfolio-concurrency-control-8-2.png)
+![Sticky Partitioner](/assets/img/portfolio/lab/concurrency-control/concurrency-control-8/Portfolio-concurrency-control-8-2.png)
 
 ### 원인: Sticky Partitioner (기본값)
 
@@ -215,7 +215,7 @@ Sticky Partitioner:
 
 > 하지만 `Redis` 에서 이미 순번을 처리하므로 상관없다.
 
-![RoundRobin Partitioner](/assets/img/2026-02-02/Portfolio-concurrency-control-8-3.png)
+![RoundRobin Partitioner](/assets/img/portfolio/lab/concurrency-control/concurrency-control-8/Portfolio-concurrency-control-8-3.png)
 
 ### Partitioner 비교
 

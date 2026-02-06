@@ -1,6 +1,6 @@
 ---
 title: (Docker) Spring 배포 환경 구축기 - 3. Spring Boot 애플리케이션 이미지 빌드 및 실행
-date: 2025-12-30 00:00:00 +09:00
+date: 2025-12-30
 categories: [Docker, 개발환경]
 tags: [Docker, Spring Boot, Dockerfile, 배포]
 description: Spring Boot 프로젝트를 Dockerfile로 이미지화하고 컨테이너로 실행하기
@@ -17,7 +17,7 @@ image:
 
 지난 포스팅에서 `MySQL` 컨테이너를 띄워보았습니다. 이제 `Spring Boot`애플리케이션을 도커 위로 올릴 차례입니다. 이를 위해선 **'어떤 환경에서, 어떤 파일을, 어떻게 실행해라'** 라는 명세서가 필요한데, 이것이 바로 `Dockerfile`입니다.
 
-![](/assets/img/2025-12-30/Docker_Setting(Spring)_3_img_1.png)*[Docker Layers](https://docs.docker.com/build/cache/)*
+![](/assets/img/devops/docker/docker-setting-3/Docker_Setting(Spring)_3_img_1.png)*[Docker Layers](https://docs.docker.com/build/cache/)*
 
 ### 1. Spring Boot 프로젝트 빌드 (JAR 생성)
 
@@ -75,7 +75,7 @@ docker run -d -p 8080:8080 --name spring-app spring-basic
 3. **보안 취약점**: 컨테이너가 기본적으로 `Root` 권한으로 실행되어 보안에 취약합니다.
 4. **캐싱 미활용**: 코드 한 줄만 바꿔도 매번 무거운 `JAR` 파일을 통째로 다시 복사해야 합니다.
 
-![](/assets/img/2025-12-30/Docker_Setting(Spring)_3_img_2.png)*[Docker Layers Cache](https://docs.docker.com/build/cache/)*
+![](/assets/img/devops/docker/docker-setting-3/Docker_Setting(Spring)_3_img_2.png)*[Docker Layers Cache](https://docs.docker.com/build/cache/)*
 
 > 이 모든걸 감내할 수 있다면, 그냥 사용하셔도 무방합니다. 하지만 `build` **속도** 때문에 답답할 겁니다.
 
@@ -150,7 +150,7 @@ ENTRYPOINT ["java", "-Xmx512m", "-XX:+UseContainerSupport", "-Dlogging.file.path
  - `chown -R appuser:appgroup /app`을 통해 새로 만든 일반 사용자 계정이 이 폴더에 로그 파일을 쓸 수 있도록 소유권 부여
  > 이 설정이 없으면 `USER appuser`로 전환된 후 로그를 쓰려 할 때 `Permission Denied` 에러가 발생하며 서버가 띄워지지 않습니다.
 
- ![](/assets/img/2025-12-30/Docker_Setting(Spring)_3_img_3.webp)*[Docker Multi-stage Build](https://labs.iximiuz.com/tutorials/docker-multi-stage-builds)*
+ ![](/assets/img/devops/docker/docker-setting-3/Docker_Setting(Spring)_3_img_3.webp)*[Docker Multi-stage Build](https://labs.iximiuz.com/tutorials/docker-multi-stage-builds)*
 
 > 이 `Dockerfile` 을 통해 이제 명령어 두 가지만 실행하면 됩니다!
  - **`docker build -t spring-basic .`**: 소스 빌드와 이미지 생성을 한 단계로 통합

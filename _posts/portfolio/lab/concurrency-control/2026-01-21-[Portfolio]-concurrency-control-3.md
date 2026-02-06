@@ -1,6 +1,6 @@
 ---
 title: 동시성 제어 - 3. Redis 분산 락
-date: 2026-01-21 00:00:00 +09:00
+date: 2026-01-21
 categories: [Spring, Project]
 tags: [spring-boot, redis, redisson, distributed-lock, concurrency]
 image: 
@@ -377,7 +377,7 @@ Watchdog:   [30초 설정] [30초 연장] [30초 연장]...
 | **Redis** | `Redis 7.0` |
 
 ### 테스트 결과
-![](/assets/img/2026-01-21/Portfolio-concurrency-control-3-1.png)*[k6 test]*
+![](/assets/img/portfolio/lab/concurrency-control/concurrency-control-3/Portfolio-concurrency-control-3-1.png)*[k6 test]*
 
 ```
 // 테스트 결과 요약

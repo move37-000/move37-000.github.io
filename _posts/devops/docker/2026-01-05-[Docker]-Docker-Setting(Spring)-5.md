@@ -1,6 +1,6 @@
 ---
 title: (Docker) Spring 배포 환경 구축기 - 5. application.yml 설정과 Multi-Profile
-date: 2026-01-05 00:00:00 +09:00
+date: 2026-01-05
 categories: [Docker, 개발환경]
 tags: [Docker, Spring Boot, application.yml, Multi-Profile]
 description: 파일 분리를 통한 환경별 Spring Boot 설정 최적화
@@ -38,7 +38,7 @@ image:
 
 > `application.yml` 또는 `application-{profile}.yml` 파일들은 프로젝트의 `/src/main/resources/` 경로에 위치
 
-![](/assets/img/2026-01-05/Docker_Setting(Spring)_5_img_1.png)*application.yml*
+![](/assets/img/devops/docker/docker-setting-5/ocker_Setting(Spring)_5_img_1.png)*application.yml*
 
  
 ### 1. application.yml
@@ -163,7 +163,7 @@ spring:
 2. **변수 치환**: `application-prod.yml`에 적힌 `${DB_PROD_NAME}` 등은 도커 컨테이너의 시스템 환경 변수에서 값 조회
 3. **네트워크 호스트**: `url`에 적힌 `db-prod`는 도커의 내장 `DNS`가 `db-prod` 컨테이너의 내부 `IP`로 자동 변환
 
-![](/assets/img/2026-01-05/Docker_Setting(Spring)_5_img_2.png)*[Docker Network](https://www.docker.com/blog/how-docker-desktop-networking-works-under-the-hood/)*
+![](/assets/img/devops/docker/docker-setting-5/Docker_Setting(Spring)_5_img_2.png)*[Docker Network](https://www.docker.com/blog/how-docker-desktop-networking-works-under-the-hood/)*
 
 ## 현재까지의 진행 상황
 

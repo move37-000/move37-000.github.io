@@ -1,6 +1,6 @@
 ---
 title: 동시성 제어 - 2. 비관적 락
-date: 2026-01-19 00:00:00 +09:00
+date: 2026-01-19
 categories: [Spring, Project]
 tags: [spring-boot, jpa, pessimistic-lock, concurrency, select-for-update]
 image: 
@@ -186,7 +186,7 @@ public class Coupon {
 | **락 타임아웃** | `3초` |
 
 ### 테스트 결과
-![](/assets/img/2026-01-19/Portfolio-concurrency-control-2-1.png)*[k6 test]*
+![](/assets/img/portfolio/lab/concurrency-control/concurrency-control-2/Portfolio-concurrency-control-2-1.png)*[k6 test]*
 
 ```
 // 테스트 결과 요약

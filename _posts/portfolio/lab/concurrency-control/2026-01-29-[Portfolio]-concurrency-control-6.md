@@ -349,27 +349,27 @@ public void handleCouponIssued(CouponIssuedEvent event) {
 3. `DLQ Consumer` → 3회 재시도 → 성공 or `@Recover`
 
 ### 실행 결과
-**Main Consumer 재시도, DLQ 등록**
-![](/assets/img/2026-01-29/Portfolio-concurrency-control-6-1.png)
+**Main Consumer 재시도, DLQ 등록*
+![](/assets/img/portfolio/lab/concurrency-control/concurrency-control-6/Portfolio-concurrency-control-6-1.png)
 
 - `memberId: 111` 저장 후 `memberId: 10` 이 강제 예외 처리로 재시도 로직 진입
 - 재시도 4회 완료 후 `DLQ` 등록
 - `DLQ` 메시지 수신부터 `Main Consumer`**와 다른 스레드로 동작 확인**
 
 **DLQ 처리 시도**
-![](/assets/img/2026-01-29/Portfolio-concurrency-control-6-2.png)
+![](/assets/img/portfolio/lab/concurrency-control/concurrency-control-6/Portfolio-concurrency-control-6-2.png)
 
 - `DLQ Consumer`와 `Main Consumer`의 동시 동작 확인
 
 **DLQ 최종 실패**
-![](/assets/img/2026-01-29/Portfolio-concurrency-control-6-3.png)
+![](/assets/img/portfolio/lab/concurrency-control/concurrency-control-6/Portfolio-concurrency-control-6-3.png)
 
 - `DLQ Consumer` 에서도 강제 예외 처리로 인하여 최종 실패 발생
 - 최종 실패 후 `Redis` **재고 원복과 발급 이력 롤백**
 
 **DLQ 최종 실패 이력 저장**
-![](/assets/img/2026-01-29/Portfolio-concurrency-control-6-4.png)
-![](/assets/img/2026-01-29/Portfolio-concurrency-control-6-5.png)
+![](/assets/img/portfolio/lab/concurrency-control/concurrency-control-6/Portfolio-concurrency-control-6-4.png)
+![](/assets/img/portfolio/lab/concurrency-control/concurrency-control-6/Portfolio-concurrency-control-6-5.png)
 
 - `DLQ Consumer` 최종 실패 이력 저장
 

@@ -1,6 +1,6 @@
 ---
 title: 동시성 제어 - 4. Redis DECR + Kafka 비동기 처리
-date: 2026-01-26 00:00:00 +09:00
+date: 2026-01-26
 categories: [Spring, Project]
 tags: [spring-boot, redis, kafka, async, concurrency]
 image: 
@@ -501,7 +501,7 @@ public void handleCouponIssued(CouponIssuedEvent event) {
 | **Kafka** | `Confluent Kafka` |
 
 ### 테스트 결과
-![](/assets/img/2026-01-26/Portfolio-concurrency-control-4-1.png)*[k6 test]*
+![](/assets/img/portfolio/lab/concurrency-control/concurrency-control-4/Portfolio-concurrency-control-4-1.png)*[k6 test]*
 
 ```
 // 테스트 결과 요약

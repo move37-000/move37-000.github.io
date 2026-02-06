@@ -1,6 +1,6 @@
 ---
 title: (Docker) Spring 배포 환경 구축기 - 1. 도커의 필요성과 WSL2 설치
-date: 2025-12-26 00:00:00 +09:00
+date: 2025-12-24
 categories: [Docker, 개발환경]
 tags: [Docker, WSL2, 개발환경]
 description: Docker 와 개발환경
@@ -37,7 +37,7 @@ image:
 ### 2. 컨테이너(`Container`) = 붕어빵
 - 이미지라는 틀을 사용해 실제로 구워낸 **'실행체'**입니다. 독립된 공간이라서, 내 컴퓨터 안에 여러 개의 붕어빵(컨테이너)을 만들어도 서로 간섭하지 않습니다.
 
-![](/assets/img/2025-12-26/Docker_Setting(Spring)_1_img_1.png)*[Docker and Container](https://stackoverflow.com/questions/23735149/what-is-the-difference-between-a-docker-image-and-a-container)*
+![](/assets/img/devops/docker/docker-setting-1/Docker_Setting(Spring)_1_img_1.png)*[Docker and Container](https://stackoverflow.com/questions/23735149/what-is-the-difference-between-a-docker-image-and-a-container)*
 
 ## 설치하기 전에 - WSL2 설치(`Windows`)
 
@@ -46,7 +46,7 @@ image:
 - **`WSL2`?** : `Windows Subsystem for Linux 2`, **`Windows` 안에서 `Linux Kernel`을 직접 실행**할 수 있게 해줍니다.
 - **왜 설치해야 하는지?** : 도커 컨테이너는 **`Linux Kernel`의 격리 기술(`namespaces`, `cgroups`)**을 기반으로 동작합니다. `Windows`는 `Linux`와 구조가 완전히 다르기 때문에 도커가 돌아갈 수 없습니다. `Windows` 위에 가상의 `Linux` 환경(`WSL2`)을 만들고, 도커가 그 위에서 구동될 수 있게 만드는 것입니다.
 
-![](/assets/img/2025-12-26/Docker_Setting(Spring)_1_img_2.png)*[Docker and WSL2](https://forums.docker.com/t/is-there-a-pictorial-diagram-of-how-wsl-2-docker-docker-desktop-are-related/100071)*
+![](/assets/img/devops/docker/docker-setting-1/Docker_Setting(Spring)_1_img_2.png)*[Docker and WSL2](https://forums.docker.com/t/is-there-a-pictorial-diagram-of-how-wsl-2-docker-docker-desktop-are-related/100071)*
 
 > 윈도우라는 땅 위에 리눅스라는 **특수 포장도로(`WSL2`)**를 깔아, 그 길 위에서만 달리는 전용차인 **도커**가 움직일 수 있게 만드는 과정입니다.
 {: .prompt-info }

@@ -1,6 +1,6 @@
 ---
 title: 동시성 제어 - 0. 프로젝트 설계
-date: 2026-01-13 00:00:00 +09:00
+date: 2026-01-13
 categories: [Spring, Project]
 tags: [spring-boot, jpa, architecture, project-setup]
 image: 

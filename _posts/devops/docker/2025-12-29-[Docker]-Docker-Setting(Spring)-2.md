@@ -1,6 +1,6 @@
 ---
 title: (Docker) Spring 배포 환경 구축기 - 2. Docker로 MySQL 띄우기 (Volume 설정)
-date: 2025-12-29 00:00:00 +09:00
+date: 2025-12-29
 categories: [Docker, 개발환경]
 tags: [Docker, MySQL, Volume]
 description: Docker를 이용한 MySQL 설치와 데이터 보존 방법
@@ -38,7 +38,7 @@ docker run -d `
 - 호스트(왼쪽) 포트 번호 변경(`-p 3307:3306`)
 - 외부(`DBeaver` 등)에서는 `3307`로 접속하고, 컨테이너 내부 `MySQL`은 원래대로 `3306`으로 동작
 
-![](/assets/img/2025-12-29/Docker_Setting(Spring)_2_img_1.webp)*[Docker HTTP Routing](https://docs.docker.com/guides/traefik/)*
+![](/assets/img/devops/docker/docker-setting-2/Docker_Setting(Spring)_2_img_1.webp)*[Docker HTTP Routing](https://docs.docker.com/guides/traefik/)*
 
 > **포트 포워딩:** 외부(내 `PC`)에서 컨테이너 내부의 서비스에 접속할 수 있도록 **특정 포트끼리 연결해주는 '입구'**의 개념(자세한 네트워크 원리는 추후 `docker-compose.yml` 에서 다룰 예정)
 
@@ -46,7 +46,7 @@ docker run -d `
 
 여기서 중요한 문제가 발생합니다. 도커 컨테이너는 **휘발성**입니다. 컨테이너를 삭제(`docker rm`)하면 그 안에서 생성했던 데이터베이스와 테이블도 모두 함께 사라집니다. 실제 운영 환경에서 이런 일이 발생한다면 재앙이겠죠?
 
-![](/assets/img/2025-12-29/Docker_Setting(Spring)_2_img_2.webp)*[Docker Container and layers](https://docs.docker.com/engine/storage/drivers/)*
+![](/assets/img/devops/docker/docker-setting-2/Docker_Setting(Spring)_2_img_2.webp)*[Docker Container and layers](https://docs.docker.com/engine/storage/drivers/)*
 
 > 그래서 필요한 것이 바로 **Volume(볼륨)** 설정입니다.
 {: .prompt-info }
@@ -65,7 +65,7 @@ docker run -d `
 - `C:\Users\Project\db_data:/var/lib/mysql` 처럼 내 PC의 **실제 특정 폴더 경로**를 직접 연결
 - 내 눈에 보이는 폴더와 바로 동기화되므로 설정 파일을 실시간으로 수정하고 반영할 때 편리합니다. 하지만 OS마다 경로 형식이 다르고, 실수로 로컬 폴더를 지우면 데이터도 사라질 위험이 있습니다.
 
-![](/assets/img/2025-12-29/Docker_Setting(Spring)_2_img_3.png)*[Docker Use bind mounts](https://docker-docs.uclv.cu/storage/bind-mounts/)*
+![](/assets/img/devops/docker/docker-setting-2/Docker_Setting(Spring)_2_img_3.png)*[Docker Use bind mounts](https://docker-docs.uclv.cu/storage/bind-mounts/)*
 
 > 데이터 관리의 주도권을 **도커**에게 맡기고 싶다면 **Named Volume**, 내 로컬 폴더와 직접 동기화하여 자유롭게 파일을 다루고 싶다면 **Bind Mount**
 {: .prompt-info }

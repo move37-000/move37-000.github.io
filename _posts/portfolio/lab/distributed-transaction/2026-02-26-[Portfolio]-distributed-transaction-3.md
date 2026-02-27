@@ -4,7 +4,6 @@ date: 2026-02-26
 categories: [Spring, Project]
 tags: [spring-boot, jpa, Kafka, outbox-pattern, transactional-outbox, load-test, k6]
 image: 
-published: false  
 ---
 
 ## 분산 트랜잭션 #3 - Transactional Outbox 패턴으로 커넥션 풀 고갈 해결
@@ -322,24 +321,19 @@ curl http://host.docker.internal:8080/api/v1/stocks/1/remaining
 3. Kafka Consumer → 결제 API 호출 → 성공이면 PAID / 실패면 FAILED + 재고 복구
 ```
 
-각 단계가 **독립된 트랜잭션**에서 실행되므로, 하나가 느려도 다른 단계에 영향을 주지 않는다. 사용자 트랜잭션은 수 ms만에 끝나고, 시간이 걸리는 결제 처리는 별도로 진행된다.
-
----
+각 단계가 **독립된 트랜잭션**에서 실행되므로, 하나가 느려도 다른 단계에 영향을 주지 않는다. 사용자 트랜잭션은 수 `ms`만에 끝나고, 시간이 걸리는 결제 처리는 별도로 진행된다.
 
 ## 이번 Phase에서 배운 것
-
 **Transactional Outbox 패턴은 DB 트랜잭션과 외부 호출을 안전하게 분리하는 핵심 패턴이다.**
 
-Phase 2에서 재고의 94%를 못 팔았던 시스템이 Phase 3에서는 정상적으로 동작하기 시작했다. 커넥션 풀 고갈이 사라지고, 응답 시간이 4배 개선되었으며, 데이터 정합성도 100% 유지되었다.
+`Phase 2`에서 재고의 `94%`를 못 팔았던 시스템이 `Phase 3`에서는 정상적으로 동작하기 시작했다. 커넥션 풀 고갈이 사라지고, 응답 시간이 `4배` 개선되었으며, 데이터 정합성도 `100%` 유지되었다.
 
-Outbox 패턴의 핵심은 **"이벤트를 비즈니스 데이터와 같은 트랜잭션에 저장한다"**는 한 줄로 요약된다. 이 단순한 원리 하나로 "DB 저장은 성공했는데 이벤트 발행은 실패"하는 불일치 문제를 원천 차단할 수 있다.
-
----
+`Outbox` `패턴의 핵심은 **"이벤트를 비즈니스 데이터와 같은 트랜잭션에 저장한다"**는 한 줄로 요약된다. 이 단순한 원리 하나로 "DB 저장은 성공했는데 이벤트 발행은 실패"하는 불일치 문제를 원천 차단할 수 있다.
 
 ## What's Next
 
 **Phase 4: SAGA 패턴 - 보상 트랜잭션 자동화**
 
-- 현재는 결제 실패 시 Consumer 안에서 직접 `stockService.restore()`를 호출한다. 서비스가 늘어나면 보상 로직이 복잡해진다.
-- SAGA 패턴(Choreography 또는 Orchestration)을 도입하여 보상 트랜잭션을 체계적으로 관리한다.
+- 현재는 결제 실패 시 `Consumer` 안에서 직접 `stockService.restore()`를 호출한다. 서비스가 늘어나면 보상 로직이 복잡해진다.
+- `SAGA` 패턴(`Choreography` 또는 `Orchestration`)을 도입하여 보상 트랜잭션을 체계적으로 관리한다.
 - "결제는 성공했는데 배송 서비스가 실패하면?" 같은 다단계 보상 시나리오를 처리할 예정이다.

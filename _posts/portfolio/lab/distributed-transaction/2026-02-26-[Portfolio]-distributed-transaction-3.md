@@ -2,7 +2,7 @@
 title: 분산 트랜잭션 - 3. Transactional Outbox 패턴으로 커넥션 풀 고갈 해결
 date: 2026-02-26
 categories: [Spring, Project]
-tags: [spring-boot, jpa, kafka, outbox-pattern, transactional-outbox, load-test, k6]
+tags: [spring-boot, jpa, Kafka, outbox-pattern, transactional-outbox, load-test, k6]
 image: 
 published: false  
 ---
@@ -10,18 +10,13 @@ published: false
 ## 분산 트랜잭션 #3 - Transactional Outbox 패턴으로 커넥션 풀 고갈 해결
 
 ### 이번 Phase의 목표
+`Phase 2`에서 확인한 **커넥션 풀 고갈** 문제를 `Transactional Outbox` 패턴으로 해결한다.
+`DB` 트랜잭션에서 외부 `API` 호출을 분리하고, `Kafka`를 통해 비동기로 결제를 처리한다.
 
-Phase 2에서 확인한 **커넥션 풀 고갈** 문제를 Transactional Outbox 패턴으로 해결한다.
-
-DB 트랜잭션에서 외부 API 호출을 분리하고, Kafka를 통해 비동기로 결제를 처리한다.
-
-결론부터 말하면, **커넥션 풀 고갈이 완전히 해소**되었고, 응답 시간이 26초에서 6초로 4배 개선되었다.
-
----
+결론부터 말하면, **커넥션 풀 고갈이 완전히 해소**되었고, 응답 시간이 `26초`에서 `6초`로 `4배` 개선되었다.
 
 ## 시스템 구조
-
-Phase 2에서는 하나의 트랜잭션 안에서 재고 차감부터 결제 API 호출까지 전부 처리했다. Phase 3에서는 결제를 트랜잭션 밖으로 분리했다.
+`Phase 2`에서는 하나의 트랜잭션 안에서 재고 차감부터 결제 `API` 호출까지 전부 처리했다. `Phase 3`에서는 결제를 트랜잭션 밖으로 분리했다.
 
 ```
 [사용자 요청 트랜잭션 - 빠르게 끝남]

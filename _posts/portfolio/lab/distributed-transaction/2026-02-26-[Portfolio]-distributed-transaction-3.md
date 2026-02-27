@@ -256,18 +256,15 @@ curl http://host.docker.internal:8080/api/v1/stocks/1/remaining
 ```
 
 ### 테스트 결과
+![](/assets/img/portfolio/lab/distributed-transaction/distributed-transaction-3/Portfolio-distributed-transaction-3-1.png)*[k6 test]*
 
-<!-- k6 실행 결과 스크린샷 -->
+![](/assets/img/portfolio/lab/distributed-transaction/distributed-transaction-3/Portfolio-distributed-transaction-3-2.png)*[orders/summary]*
 
-<!-- orders/summary 결과 스크린샷 -->
+![](/assets/img/portfolio/lab/distributed-transaction/distributed-transaction-3/Portfolio-distributed-transaction-3-3.png)*[payments/summary]*
 
-<!-- payments/summary 결과 스크린샷 -->
+![](/assets/img/portfolio/lab/distributed-transaction/distributed-transaction-3/Portfolio-distributed-transaction-3-4.png)*[outbox/remaining]*
 
-<!-- outbox/summary 결과 스크린샷 -->
-
-<!-- stocks/remaining 결과 스크린샷 -->
-
----
+![](/assets/img/portfolio/lab/distributed-transaction/distributed-transaction-3/Portfolio-distributed-transaction-3-5.png)*[stocks/remaining]*
 
 ## 결과 분석
 

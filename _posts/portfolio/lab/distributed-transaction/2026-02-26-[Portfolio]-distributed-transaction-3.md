@@ -42,10 +42,7 @@ Kafka Consumer (별도 스레드)
 
 핵심 변화는 단순하다. **결제 API 호출이 사용자 요청 트랜잭션에서 빠졌다.** 이것만으로 커넥션 풀 고갈이 해결된다.
 
----
-
 ## Transactional Outbox 패턴이란?
-
 비즈니스 데이터와 이벤트를 **같은 트랜잭션에 저장**하는 패턴이다.
 
 ```
@@ -56,16 +53,13 @@ Kafka Consumer (별도 스레드)
 }
 ```
 
-DB 저장이 성공하면 이벤트 저장도 반드시 성공한다. 같은 트랜잭션이니까 원자성이 보장된다. 이후 별도 프로세스가 Outbox 테이블을 읽어 Kafka로 발행한다.
+`DB` 저장이 성공하면 이벤트 저장도 반드시 성공한다. **같은 트랜잭션이니까 원자성이 보장된다.** 이후 별도 프로세스가 `Outbox` 테이블을 읽어 Kafka로 발행한다.
 
 이렇게 하면 "DB는 저장됐는데 Kafka 발행 실패"라는 데이터 불일치 문제를 방지할 수 있다.
-
----
 
 ## 핵심 구현
 
 ### Phase 2 → Phase 3 변경점
-
 ```
 Phase 2: 재고 차감 → 주문 생성 → [결제 API 호출] → 결과 반영   ← 전부 하나의 트랜잭션
 Phase 3: 재고 차감 → 주문 생성 → 결제 생성 → Outbox 저장       ← 트랜잭션은 여기서 끝
@@ -73,13 +67,12 @@ Phase 3: 재고 차감 → 주문 생성 → 결제 생성 → Outbox 저장    
 ```
 
 ### 주문 흐름 (사용자 트랜잭션)
-
-Phase 2에서 결제 API 호출 부분이 Outbox 이벤트 저장으로 대체되었다.
+`Phase 2`에서 결제 `API` 호출 부분이 `Outbox` 이벤트 저장으로 대체되었다.
 
 ```java
 @Transactional
 public OrderResponse createOrder(Long memberId, Long productId, int quantity) {
-    // 1~3. 회원 확인, 상품 조회, 중복 주문 확인 (Phase 2와 동일)
+    // 1 ~ 3. 회원 확인, 상품 조회, 중복 주문 확인 (Phase 2와 동일)
 
     // 4. 재고 차감 (낙관적 락)
     stockService.decrease(productId, quantity);
@@ -107,11 +100,10 @@ public OrderResponse createOrder(Long memberId, Long productId, int quantity) {
 // 여기서 트랜잭션 종료 → 커넥션 즉시 반환
 ```
 
-Phase 2에서는 6번 자리에 `paymentService.processPayment()`가 있었고, 이 안에서 결제 API를 호출하며 100ms~1000ms를 블로킹했다. Phase 3에서는 Outbox에 이벤트만 저장하고 끝이다. **DB INSERT 몇 건이 전부이므로 트랜잭션이 수 ms 내에 끝난다.**
+`Phase 2`에서는 6번 자리에 `paymentService.processPayment()`가 있었고, 이 안에서 결제 `API`를 호출하며 `100ms~1000ms`를 블로킹했다. `Phase 3`에서는 `Outbox`에 이벤트만 저장하고 끝이다. **DB INSERT 몇 건이 전부이므로 트랜잭션이 수 ms 내에 끝난다.**
 
 ### Outbox 이벤트 발행 (Polling)
-
-스케줄러가 100ms 간격으로 Outbox 테이블에서 PENDING 이벤트를 조회하여 Kafka로 발행한다.
+스케줄러가 `100ms` 간격으로 `Outbox` 테이블에서 `PENDING` 이벤트를 조회하여 `Kafka`로 발행한다.
 
 ```java
 @Component
@@ -140,13 +132,10 @@ public class OutboxEventPublisher {
 }
 ```
 
-스케줄러가 직접 결제 API를 호출하지 않고 **Kafka에 발행만 하는 이유**가 있다. 스케줄러가 직접 결제를 호출하면 결제 응답을 기다리는 동안 다음 이벤트 처리가 밀린다. Kafka에 넘기면 발행은 수 ms로 끝나고, 시간이 걸리는 결제 처리는 Consumer에게 위임할 수 있다.
-
-`@Transactional`이 붙어있는 이유는 `event.markPublished()`로 상태를 변경한 뒤, 트랜잭션 종료 시 JPA의 변경 감지(Dirty Checking)로 자동 UPDATE하기 위해서다.
+스케줄러가 직접 결제 `API`를 호출하지 않고 **Kafka에 발행만 하는 이유**가 있다. 스케줄러가 직접 결제를 호출하면 결제 응답을 기다리는 동안 다음 이벤트 처리가 밀린다. `Kafka`에 넘기면 발행은 `수 ms`로 끝나고, 시간이 걸리는 결제 처리는 `Consumer`에게 위임할 수 있다.
 
 ### 발행 실패 시 재시도
-
-Outbox 이벤트는 최대 3회까지 재시도한다. 3회 초과 시 FAILED로 마킹되어 수동 확인이 필요한 상태로 전환된다.
+`Outbox` 이벤트는 최대 `3회`까지 재시도한다. `3회` 초과 시 `FAILED`로 마킹되어 수동 확인이 필요한 상태로 전환된다.
 
 ```java
 public void markFailed() {
@@ -158,11 +147,10 @@ public void markFailed() {
 }
 ```
 
-이전 프로젝트(쿠폰 발급 시스템)에서는 Kafka가 핵심 파이프라인이어서 Kafka 레벨의 DLQ + ErrorHandler로 재시도를 처리했다. 이번 프로젝트에서는 Outbox 테이블 자체가 안전망 역할을 하므로, **Outbox 레벨에서 재시도를 관리**한다. Kafka 발행이 실패해도 Outbox에 원본이 남아있으니 다음 Polling에서 다시 시도할 수 있다.
+이전 프로젝트(쿠폰 발급 시스템)에서는 `Kafka`가 핵심 파이프라인이어서 `Kafka` 레벨의 `DLQ + ErrorHandler`로 재시도를 처리했다. 이번 프로젝트에서는 `Outbox` 테이블 자체가 안전망 역할을 하므로, **Outbox 레벨에서 재시도를 관리**한다. `Kafka` 발행이 실패해도 `Outbox`에 원본이 남아있으니 다음 `Polling`에서 다시 시도할 수 있다.
 
 ### Kafka Consumer (비동기 결제 처리)
-
-Kafka에서 이벤트를 수신하여 결제를 처리한다. 이 과정은 사용자 요청 트랜잭션과 **완전히 별개의 스레드, 별개의 트랜잭션**에서 실행된다.
+`Kafka`에서 이벤트를 수신하여 결제를 처리한다. 이 과정은 사용자 요청 트랜잭션과 **완전히 별개의 스레드, 별개의 트랜잭션**에서 실행된다.
 
 ```java
 @KafkaListener(topics = "payment-request", groupId = "payment-consumer-group")
@@ -196,13 +184,10 @@ public void processPaymentAsync(OrderPaymentRequestedEvent event) {
 }
 ```
 
-결제 API의 100ms~1000ms 지연이 여전히 존재하지만, **사용자 요청과 무관한 별도 스레드에서 실행**되므로 사용자 트랜잭션의 커넥션을 점유하지 않는다.
-
----
+결제 API의 `100ms ~ 1000ms` 지연이 여전히 존재하지만, **사용자 요청과 무관한 별도 스레드에서 실행**되므로 사용자 트랜잭션의 커넥션을 점유하지 않는다.
 
 ## DB 스키마
-
-Phase 2의 테이블에 `outbox_events` 테이블이 추가되었다.
+`Phase 2`의 테이블에 `outbox_events` 테이블이 추가되었다.
 
 ```sql
 CREATE TABLE outbox_events (
@@ -220,15 +205,12 @@ CREATE TABLE outbox_events (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 ```
 
-`payload`에는 이벤트 내용이 JSON 문자열로 저장된다. OrderService에서 Outbox를 저장할 때 이미 JSON으로 직렬화하므로, Kafka 발행 시 별도의 변환 없이 그대로 보낼 수 있다.
+`payload`에는 이벤트 내용이 `JSON` 문자열로 저장된다. `OrderService`에서 `Outbox`를 저장할 때 이미 `JSON`으로 직렬화하므로, `Kafka` 발행 시 별도의 변환 없이 그대로 보낼 수 있다.
 
-`idx_outbox_status_created` 인덱스는 Polling 시 `WHERE status='PENDING' ORDER BY created_at` 쿼리를 효율적으로 수행하기 위한 것이다.
-
----
+`idx_outbox_status_created` 인덱스는 `Polling` 시 `WHERE status='PENDING' ORDER BY created_at` 쿼리를 효율적으로 수행하기 위한 것이다.
 
 ## 실무와의 차이
-
-이 프로젝트에서는 **결제 자체를 비동기로 분리**했다. 사용자가 주문 버튼을 누르면 PENDING 상태로 즉시 응답하고, 결제는 Kafka Consumer가 나중에 처리한다.
+이 프로젝트에서는 **결제 자체를 비동기로 분리**했다. 사용자가 주문 버튼을 누르면 `PENDING` 상태로 즉시 응답하고, 결제는 `Kafka Consumer`가 나중에 처리한다.
 
 하지만 실무에서는 이렇게 하지 않는다. 실제 이커머스(쿠팡, 배달의민족 등)에서는 **결제까지는 동기로 처리**한다. 사용자가 결제 버튼을 누르면 PG사 결제창이 뜨고, 결제가 완료된 뒤에야 "주문 완료" 화면을 보여준다. 돈이 빠져나갔는지를 사용자가 즉시 알 수 있어야 하기 때문이다.
 

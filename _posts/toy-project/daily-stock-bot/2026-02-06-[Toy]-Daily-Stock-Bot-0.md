@@ -263,7 +263,6 @@ daily-stock-bot/
 `Pydantic`은 런타임 `validation`이 강력하지만, 이 프로젝트에서는 과하다. 외부 `API` 응답을 파싱하는 것이 아니라, **이미 파싱된 데이터를 내부적으로 전달**하는 용도이므로 표준 라이브러리인 `dataclass`로 충분하다
 
 ### 왜 Port/Adapter인가
-
 Java에서 5년간 Spring DI를 써왔지만, Python에서는 DI를 어떻게 적용하는지 몰랐다. Python에는 Spring 같은 DI 컨테이너가 없지만, `Protocol`(Java의 `interface`에 해당)을 사용하면 동일한 효과를 얻을 수 있다.
 
 더 중요한 이유는 **데이터 소스 교체 문제**다. KRX API를 메인으로, 네이버 금융을 폴백으로 구성하려면, 같은 인터페이스를 구현하는 여러 어댑터를 교체 가능하게 만들어야 한다. Port/Adapter 패턴이 정확히 이 문제를 해결한다.

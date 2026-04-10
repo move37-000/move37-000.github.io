@@ -263,7 +263,7 @@ daily-stock-bot/
 ### 왜 Port/Adapter인가
 `Java`에서 5년간 `Spring DI`를 써왔지만, `Python`에서는 `DI`를 어떻게 적용하는지 몰랐다. `Python`에는 `Spring` 같은 `DI 컨테이너`가 없지만, `Protocol`(`Java`의 `interface`에 해당)을 사용하면 동일한 효과를 얻을 수 있다.
 
-더 중요한 이유는 **데이터 소스 교체 문제**다. KRX API를 메인으로, 네이버 금융을 폴백으로 구성하려면, 같은 인터페이스를 구현하는 여러 어댑터를 교체 가능하게 만들어야 한다. Port/Adapter 패턴이 정확히 이 문제를 해결한다.
+더 중요한 이유는 **데이터 소스 교체 문제**다. `KRX API`를 메인으로, 네이버 금융을 폴백으로 구성하려면, 같은 인터페이스를 구현하는 여러 어댑터를 교체 가능하게 만들어야 한다. `Port/Adapter` 패턴이 정확히 이 문제를 해결한다.
 
 ```python
 # 폴백 체인 — Port/Adapter의 실전 활용
@@ -275,31 +275,29 @@ kr_index_fetcher = FallbackIndexFetcher([
 ```
 
 ### 왜 SQLite를 제거하는가
-
 현재 `save_stock_price()`로 저장은 하지만, **저장한 데이터를 읽는 곳이 없다.** `get_stock_history()`가 정의되어 있지만, `__init__.py`에서 주석 처리되어 있고 호출하는 코드가 없다. 리포트 생성 시 히스토리 데이터는 크롤러에서 직접 가져온 것을 사용한다.
 
-사용하지 않는 코드를 남겨두는 건 기술 부채다. 나중에 히스토리 기능이 필요하면 그때 Repository Protocol을 먼저 정의하고 시작하면 된다.
+**사용하지 않는 코드를 남겨두는 건 기술 부채다.** 나중에 히스토리 기능이 필요하면 그때 `Repository Protocol`을 먼저 정의하고 시작하면 된다.
 
 ## 이전 프로젝트와의 연결
+이전 프로젝트(`order-transaction-lab`)에서는 **분산 환경에서의 트랜잭션 정합성**을 다뤘다. `Transactional Outbox`, `SAGA` 패턴 등 `Spring/Java` 의 설계 패턴을 학습했다.
 
-이전 프로젝트(`order-transaction-lab`)에서는 **분산 환경에서의 트랜잭션 정합성**을 다뤘다. Transactional Outbox, SAGA 패턴 등 Spring/Java 생태계의 설계 패턴을 학습했다.
+이번 프로젝트는 관점이 다르다. 특정 기술 패턴이 아니라, **프로덕션 수준의 코드 설계란 무엇인가**를 `Python`이라는 다른 언어에서 실천하는 과정이다.
 
-이번 프로젝트는 관점이 다르다. 특정 기술 패턴이 아니라, **"프로덕션 수준의 코드 설계란 무엇인가"**를 Python이라는 다른 언어에서 실천하는 과정이다.
-
-| order-transaction-lab | Daily Stock Bot 리팩토링 |
+| `order-transaction-lab` | `Daily Stock Bot` 리팩토링 |
 | :--- | :--- |
-| Java/Spring 생태계 | Python 생태계 |
+| `Java/Spring` 생태계 | `Python` 생태계 |
 | 분산 트랜잭션 정합성 | 코드 설계 및 아키텍처 |
-| Outbox, SAGA 등 특정 패턴 | Domain Model, Port/Adapter, Error Strategy 등 범용 설계 |
-| Phase별로 문제를 겪고 해결 | Phase별로 구조를 개선하고 검증 |
+| `Outbox, SAGA` 등 특정 패턴 | `Domain Model, Port/Adapter, Error Strategy` 등 범용 설계 |
+| `Phase`별로 문제를 겪고 해결 | `Phase`별로 구조를 개선하고 검증 |
 
-두 프로젝트의 공통점은 **"문제를 직접 겪고, 왜 이 해결책이 필요한지를 체감하는 방식"**으로 진행한다는 것이다.
+두 프로젝트의 공통점은 **문제를 직접 겪고, 왜 이 해결책이 필요한지를 체감하는 방식**으로 진행한다는 것이다.
 
 ## What's Next
 
-**Phase 1: Domain Model — dict 지옥 탈출**
+**Phase 1: Domain Model — dict 리팩토링**
 
 - `dict[str, Any]`를 `dataclass` 기반 도메인 모델로 전환
 - `StockSnapshot`, `IndexSnapshot`, `MarketOverview`, `NewsItem` 등 핵심 모델 정의
-- 크롤러가 dict 대신 도메인 모델을 반환하도록 변경
-- `transformer.py`의 symbol/name 버그가 타입 시스템으로 원천 차단되는 것을 확인
+- 크롤러가 `dict` 대신 도메인 모델을 반환하도록 변경
+- `transformer.py`의 `symbol/name` 버그가 타입 시스템으로 원천 차단되는 것을 확인

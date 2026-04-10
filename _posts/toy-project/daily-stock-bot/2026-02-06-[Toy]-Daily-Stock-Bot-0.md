@@ -137,8 +137,6 @@ except Exception as e:
 - `datetime.now()`가 하드코딩되어 있어서 시간 의존 로직을 테스트할 수 없다.
 - `stock_repository.py`가 모듈 레벨 상수로 `DB` 경로를 잡아서 테스트용 `in-memory DB`를 끼울 수 없다.
 
-솔직히 말해, `Python` 에서 `DI` 를 어떻게 하는지 몰랐기 때문에 이러한 구조가 나온 이유도 있다. 하지만, 몰랐다고 안 한게 지금와서 생각해보니 **너무나 안일한 생각이였다.** 
-
 ### 문제 5: 데이터 소스 교체의 어려움 (리팩토링의 직접적 계기)
 `GitHub Actions`에서 오전 7시 반에 실행하면, **yfinance가 전일 한국 지수를 반환하지 않는 문제**가 있다. `Yahoo Finance` 쪽에서 한국 지수 수집이 늦은 것으로 추정되며, 이틀 전 지수가 최신 데이터로 나온다.
 
@@ -263,7 +261,7 @@ daily-stock-bot/
 `Pydantic`은 런타임 `validation`이 강력하지만, 이 프로젝트에서는 과하다. 외부 `API` 응답을 파싱하는 것이 아니라, **이미 파싱된 데이터를 내부적으로 전달**하는 용도이므로 표준 라이브러리인 `dataclass`로 충분하다
 
 ### 왜 Port/Adapter인가
-Java에서 5년간 Spring DI를 써왔지만, Python에서는 DI를 어떻게 적용하는지 몰랐다. Python에는 Spring 같은 DI 컨테이너가 없지만, `Protocol`(Java의 `interface`에 해당)을 사용하면 동일한 효과를 얻을 수 있다.
+`Java`에서 5년간 `Spring DI`를 써왔지만, `Python`에서는 `DI`를 어떻게 적용하는지 몰랐다. `Python`에는 `Spring` 같은 `DI 컨테이너`가 없지만, `Protocol`(`Java`의 `interface`에 해당)을 사용하면 동일한 효과를 얻을 수 있다.
 
 더 중요한 이유는 **데이터 소스 교체 문제**다. KRX API를 메인으로, 네이버 금융을 폴백으로 구성하려면, 같은 인터페이스를 구현하는 여러 어댑터를 교체 가능하게 만들어야 한다. Port/Adapter 패턴이 정확히 이 문제를 해결한다.
 

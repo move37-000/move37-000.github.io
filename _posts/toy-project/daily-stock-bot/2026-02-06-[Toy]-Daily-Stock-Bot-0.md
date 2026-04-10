@@ -25,7 +25,7 @@ image:
 
 | 구분 | 기술                          |
 | :--- |:----------------------------|
-| `Language` | `Python 3.11+`               |
+| `Language` | `Python 3.11+`               | 
 | 미국 주식 | `yfinance`                    |
 | 한국 주식 | `pykrx(현재 시점으로 yfinance)`     |
 | AI 분석 | `Google Gemini API`           |

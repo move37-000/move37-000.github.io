@@ -1,0 +1,53 @@
+<!-- Navigation buttons at the bottom of the post. -->
+
+<div class="post-navigation d-flex justify-content-between">
+  {% if page.previous.url %}
+    <a
+      href="{{ site.baseurl }}{{ page.previous.url }}"
+      class="btn btn-outline-primary"
+      prompt="{{ site.data.locales[include.lang].post.button.previous }}"
+    >
+      <p>{{ page.previous.title }}</p>
+    </a>
+  {% else %}
+    <div
+      class="btn btn-outline-primary disabled"
+      prompt="{{ site.data.locales[include.lang].post.button.previous }}"
+    >
+      <p>-</p>
+    </div>
+  {% endif %}
+
+  {% if page.next.url %}
+    <a
+      href="{{ site.baseurl }}{{page.next.url}}"
+      class="btn btn-outline-primary"
+      prompt="{{ site.data.locales[include.lang].post.button.next }}"
+    >
+      <p>{{ page.next.title }}</p>
+    </a>
+  {% else %}
+    <div
+      class="btn btn-outline-primary disabled"
+      prompt="{{ site.data.locales[include.lang].post.button.next }}"
+    >
+      <p>-</p>
+    </div>
+  {% endif %}
+</div>
+
+<script src="https://giscus.app/client.js"
+        data-repo="move37-000/move37-000.github.io"
+        data-repo-id="R_kgDOQmAo-w"
+        data-category="Announcements"
+        data-category-id="DIC_kwDOQmAo-84CzpwY"
+        data-mapping="pathname"
+        data-strict="0"
+        data-reactions-enabled="1"
+        data-emit-metadata="0"
+        data-input-position="bottom"
+        data-theme="preferred_color_scheme"
+        data-lang="ko"
+        crossorigin="anonymous"
+        async>
+</script>

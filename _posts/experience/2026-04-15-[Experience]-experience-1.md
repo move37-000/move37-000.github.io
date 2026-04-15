@@ -1,5 +1,5 @@
 ---
-title: 레거시 SI 코드에 새 기능을 얹으며 — 이상과 현실 사이의 타협점 기록
+title: 
 date: 2026-04-15
 categories: [Java, Refactoring]
 tags: [java, spring, mybatis, nexacro, oracle, legacy, architecture]
@@ -29,7 +29,7 @@ image:
 | `Logging` | `log4jdbc` |
 | 환경 | 폐쇄망, 공공기관 |
 
-**Spring Boot가 아닌 레거시 Spring** 이라는 점, **폐쇄망 공공기관** 이라는 점은 이번 고민 내내 가장 큰 변수가 됐다.
+**Spring Boot가 아닌 레거시 Spring** 이라는 점, **폐쇄망 공공기관** 이라는  점은 이번 고민 내내 가장 큰 변수가 됐다.
 
 ## 문제 분석
 

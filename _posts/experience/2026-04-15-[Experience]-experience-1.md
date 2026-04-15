@@ -48,7 +48,7 @@ com.company.system.management
 
 `Netflix`, `Naver`, `Kakao` 같은 테크 기업 오 픈소스를 보면 전부 **도 메인 기반 평평한 구조**다. `system.management.xxx` 같은 화면 메뉴 그룹명은 패키지에 등장하지 않는다.
 
-### 문제 2: `web/service/impl/dao` 레거시 3계층 구조
+### 문제 2: `web/service/impl/dao` 레거시 3계층  구조
 회사 기존 패턴:
 
 ```

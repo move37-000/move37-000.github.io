@@ -1,5 +1,5 @@
 ---
-title: Daily Stock Bot 리팩토링 - 1. Domain Model로 dict 지옥 탈출
+title: Daily Stock Bot 리팩토링 - 1. Domain Model 적용
 date: 2026-04-16
 categories: [Python, Project]
 tags: [python, refactoring, dataclass, domain-model, type-safety, enum, property]

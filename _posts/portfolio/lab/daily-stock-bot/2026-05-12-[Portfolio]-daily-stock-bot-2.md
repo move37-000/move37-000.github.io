@@ -215,10 +215,9 @@ src/
 ## 이번 글에서 배운 것
 
 1. **설계는 처음부터 완벽할 수 없다**. `IndexFetcher.fetch` 시그니처 변경, 파일별 `docstring` 보강 등. 처음 설계한`Port`가 어댑터 구현 시점에 더욱 다듬어졌다.
-2. **`Port` 개수는 도메인이 결정한다**. `Phase 0`에서 4개로 추산했지만 도메인 검토 후 6개. `Phase 1`의 가치가 드러난 지점.
+2. **`Port` 개수는 도메인이 결정한다**. `Phase 0`에서 4개로 설계했지만 도메인 검토 후 6개 가 되었다.
 3. **`Protocol`은 명시적 상속과 구조적 서브타이핑을 모두 허용**. 어댑터는 명시적(에디터 지원), 테스트 mock은 구조적(작성 부담 적음).
-4. **실패 전략은 `Port`별로 다르다**. 모두 "예외 전파"가 아님. 보조 정보 `Port`(`MarketNewsFetcher`, 뉴스 격리된 `StockFetcher`)는 격리. `Port` docstring에 명시.
-5. **로드맵은 폐기될 수 있다**. `Phase 0`의 한국 어댑터 4개 계획을 `Phase 6/7`로 분리. "원본에 있었으니 옮긴다"는 논리가 자동 적용되지 않는다.
+4. **실패 전략은 `Port`별로 다르다**. 모두 "예외 전파"가 아님. 보조 정보 `Port`(`MarketNewsFetcher`, 뉴스 격리된 `StockFetcher`)는 격리.(`Port docstring`에 명시)
 
 ## What's Next
 
@@ -226,4 +225,4 @@ src/
 
 - `YFinance` 계열 어댑터 4개 구현
 - `_yfinance_common.py` 공통 헬퍼 추출
-- 도메인 보정(`DailyPrice` → `StockDaily` 분리 + `PricePoint` 신설) — `Phase 1` 도메인 설계의 한계가 어댑터 구현 중 드러난 과정
+- 도메인 보정(`DailyPrice` → `StockDaily` 분리 + `PricePoint` 신설) — `Phase 1` 도메인 설계의 문제가 어댑터 구현 중 드러난 과정

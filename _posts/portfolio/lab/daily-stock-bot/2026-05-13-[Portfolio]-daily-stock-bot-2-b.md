@@ -86,10 +86,9 @@ def fetch(self, tickers: dict[str, str]) -> list[StockSnapshot]:
 ### `YFinanceIndexFetcher` — 원본의 `fast_info` 보정 로직 폐기
 원본은 한국 지수(KOSPI/KOSDAQ)에서 어제 데이터 누락 시 `ticker.fast_info['last_price']`로 강제 주입했다. 돌아보면 이 로직은 `OHLCV` 모든 컬럼을 `last_price` 하나로 덮어쓴다. **거래량이 가격값이 되는 버그였다**.
 
-`Phase 2` 어댑터에서는 이 로직을 **재이식하지 않고 삭제**. 미국 지수에는 필요 없고, 한국 지수는 `Phase 7`로 이동. `Phase 7` 재설계 시점에 이 로직을 **복사하면 안 된다**. 근본 원인(시간대 이슈? `yfinance`의 아시아 시장 지연?)부터 규명해야 한다.
+`Phase 2` 어댑터에서는 이 로직을 **재이식하지 않고 삭제했다**. 미국 지수에는 필요가 없는 로직이다.
 
 ### `YFinanceExchangeRateFetcher` — 도메인 차이가 구조를 결정
-
 `ExchangeRate`에는 `history` 필드가 없다. 어댑터 구조가 `YFinanceIndexFetcher`와 살짝 다르다.
 
 | 항목 | `YFinanceIndexFetcher` | `YFinanceExchangeRateFetcher` |
@@ -98,13 +97,10 @@ def fetch(self, tickers: dict[str, str]) -> list[StockSnapshot]:
 | 생성자 파라미터 | `history_days` | (없음, 클래스 상수) |
 | `history` 파싱 | 필요 | **불필요** |
 
-어댑터 간 "형식 대칭" 유혹을 거부하고 도메인이 요구하는 만큼만. **형식 일관성보다 의미가 우선**.
+도메인이 요구하는 만큼만 구조를 잡는 방향으로 갔다.
 
 ### `YFinanceMarketNewsFetcher` — `S&P 500` 뉴스를 시장 뉴스로
-
-미국 시장 뉴스 API는 따로 없다. `yfinance`가 지수 단위 뉴스를 제공하는 특성을 활용해 `^GSPC` 뉴스를 시장 뉴스로 사용. 어댑터 내부 구현은 `YFinanceFetcher`의 종목 뉴스 파싱과 동일.
-
-이 어댑터를 만들면서 `MarketNewsFetcher` `Port` docstring에 실패 전략을 보강. `Port` 설계의 두 번째 균열(`Phase 2-a` 참조).
+미국 시장 뉴스 API는 따로 없다. `yfinance`가 지수 단위 뉴스를 제공하는 특성을 활용해 `^GSPC` 뉴스를 시장 뉴스로 사용했다.
 
 ## `_yfinance_common.py` — Rule of Three의 실제 적용
 

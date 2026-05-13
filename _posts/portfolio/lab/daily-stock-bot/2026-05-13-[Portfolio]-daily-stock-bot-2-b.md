@@ -102,9 +102,8 @@ def fetch(self, tickers: dict[str, str]) -> list[StockSnapshot]:
 ### `YFinanceMarketNewsFetcher` — `S&P 500` 뉴스를 시장 뉴스로
 미국 시장 뉴스 API는 따로 없다. `yfinance`가 지수 단위 뉴스를 제공하는 특성을 활용해 `^GSPC` 뉴스를 시장 뉴스로 사용했다.
 
-## `_yfinance_common.py` — Rule of Three의 실제 적용
-
-세 번째 사용처에서 추출했다. 헬퍼 두 개 + 내부 헬퍼 하나.
+## `_yfinance_common.py` — Rule of Three
+세 번째 사용처에서 분리했다.
 
 ```python
 def calculate_change(history: pd.DataFrame) -> tuple[float, float, float]:
@@ -113,7 +112,9 @@ def calculate_change(history: pd.DataFrame) -> tuple[float, float, float]:
     prev = history.iloc[-2]
     close = float(latest["Close"])
     prev_close = float(prev["Close"])
-    return close, close - prev_close, ((close - prev_close) / prev_close) * 100
+    change = close - prev_close
+    change_pct = (change / prev_close) * 100
+    return close, change, change_pct
 
 
 def parse_yfinance_news(ticker: yf.Ticker, limit: int) -> list[NewsItem]:
@@ -131,18 +132,16 @@ def parse_yfinance_news(ticker: yf.Ticker, limit: int) -> list[NewsItem]:
     ]
 ```
 
-이 모듈의 의도된 비대칭: **`parse_yfinance_news`는 실패 격리를 하지 않는다**. 격리 정책이 `Port`마다 다르기 때문.
-
+**`parse_yfinance_news`는 실패 격리를 하지 않는다**. 격리 정책이 `Port`마다 다르기 때문.
 - `StockFetcher`의 뉴스 실패 → `news=[]` (종목 단위 격리)
 - `MarketNewsFetcher`의 뉴스 실패 → `[]` 반환 (리포트 단위 격리)
 
-공통 함수가 격리하면 컨텍스트(어느 심볼 실패?)를 잃는다. 격리 책임은 호출측 어댑터에 위임. **공통화 단위는 "정책"이 아니라 "변환"**.
+공통 함수가 격리하면 컨텍스트(어떤 종목인지, 지수인지..)를 잃는다. 격리 책임을 호출측 어댑터에 위임했다.
 
-> `Java`에서 `Optional<T>` 반환 vs 예외 던지기 결정을 호출측 책임으로 두는 패턴과 유사. 공통 유틸은 가장 일반적 형태로, 정책은 호출측.
+> `Java`에서 `Optional<T>` 반환 / 예외 던지기 결정을 호출측 책임으로 두는 패턴과 유사
 
 ## 도메인 보정 — `StockDaily` / `PricePoint` 분리
-
-`Phase 1`의 `DailyPrice`는 종목 `OHLCV`에 최적화됐다. 지수·환율에 부담을 준 지점.
+`Phase 1`의 `DailyPrice`는 종목 `OHLCV`에 최적화됐다. 지수·환율에 적용하기에는 어려움이 있었다.
 
 ```python
 # 보정 전 — YFinanceIndexFetcher._parse_history
@@ -151,10 +150,9 @@ DailyPrice(
 )
 ```
 
-지수는 `OHLCV` 중 종가만 의미 있는데 다른 필드를 억지로 채운다. `volume=0`은 "거래량 0"인지 "데이터 없음"인지 구분 불가. **원본은 `{"date": ..., "price": ...}` 2필드 dict로 우회했는데, `Phase 1` 도메인이 모든 시계열을 `DailyPrice`로 통합하면서 이 도메인 사실을 잃었다**.
+지수는 `OHLCV` 중 종가만 의미 있는데 다른 필드를 억지로 채운다. `volume=0`은 "거래량 0"인지 "데이터 없음"인지 구분이 불가했다. 
 
-해결 — 두 타입 분리.
-
+도메인을 두 개로 분리하는 것으로 해결했다.
 ```python
 # domain/stock.py
 @dataclass(frozen=True)
@@ -176,17 +174,11 @@ class PricePoint:           # 지수·환율 스파크라인용
 `StockSnapshot.history`는 `list[StockDaily]`, `IndexSnapshot.history`는 `list[PricePoint]`.
 
 보정 후 `YFinanceIndexFetcher._parse_history`:
-
 ```python
 PricePoint(date=..., price=float(row["Close"]))
 ```
 
-8줄 → 1줄. `volume=0` 매직 넘버 사라짐. 억지 채우기 사라짐.
-
-**보정의 의미**: `Phase 1`에서 이걸 못 본 게 실수일까? 어느 정도 그렇다. 다만 `Phase 2` 중 발견하고 같은 Phase에서 해결한 것이 더 중요하다. "원본 패턴 복제 금지"는 코드에만 적용되는 게 아니라 **원본이 이미 알고 있던 도메인 사실을 잃지 말라**는 의미도 포함된다.
-
 ## 디렉토리 구조
-
 ```
 src/
 ├── adapter/                                  # ← Phase 2 신설
@@ -219,16 +211,14 @@ src/
 
 ## 이번 글에서 배운 것
 
-1. **`Rule of Three`는 추출 시점의 객관적 신호**. 두 번째 중복은 추출 비용보다 결합 위험이 크고, 세 번째에서 정당화. 횟수 기반 의사결정이라 흔들림이 적다.
-2. **어댑터 간 "형식 대칭"보다 "도메인 충실"이 우선**. `YFinanceExchangeRateFetcher`가 `history_days`를 안 받는 이유 — `ExchangeRate`에 `history`가 없어서.
-3. **어댑터의 의존 감추기 경계는 `Port` 시그니처까지**. 내부 헬퍼 시그니처에 `pd.DataFrame`이 나오는 건 정상.
-4. **공통 함수는 가장 일반적 형태로**. `parse_yfinance_news`가 실패 격리를 호출측에 위임하는 이유 — 격리 정책이 `Port`마다 다르기 때문.
-5. **도메인 설계는 한 번에 끝나지 않는다**. `Phase 1` 도메인을 어댑터 구현 중 보정. 보정 자체가 학습 자산.
+1. **`Rule of Three`는 추출 시점의 객관적 신호**. 두 번째 중복은 추출 비용보다 결합 위험이 크고, 세 번째에서 정당화. 
+2. **어댑터 간 "형식 대칭"보다 "도메인 충실"이 우선**. (`YFinanceIndexFetcher` 와 `YFinanceExchangeRateFetcher`)
+3. **공통 함수는 가장 일반적 형태로 한다**. `parse_yfinance_news`가 실패 격리를 호출측에 위임하는 이유 — 격리 정책이 `Port`마다 다르기 때문.
+4. **도메인 설계는 한 번에 끝나지 않는다**. 한 번에 되는 게 이상적이긴 하지만, 발견 즉시 보정하는 것도 설계의 일부분이다.
 
 ## What's Next
 
 **`Phase 2-c`: 마지막 어댑터들과 조립**
-
 - `SlackNotifier`, `DiscordNotifier` — webhook 기반 알림 어댑터
 - `GeminiAnalyzer` — AI 시황 분석 + 모델 폴백 체인
 - `prompt_builder.py` — AI 어댑터에서 분리된 프롬프트 빌더

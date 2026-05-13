@@ -165,9 +165,7 @@ class DailyReport:
         return min(self.us_stocks, key=lambda s: s.change_pct)
 ```
 
-**"공용 번들" 성격**
-
-`DailyReport`는 AI 분석 입력만이 아니라 **그날 수집된 시장 정보 전체 번들**. 사용처에 따라 일부 필드만 쓰는 게 정상.
+`DailyReport`는 AI 분석 입력만이 아니라 **그날 수집된 시장 정보 전체 번들**
 
 | 사용처 | 활용 필드 |
 | :--- | :--- |
@@ -175,20 +173,18 @@ class DailyReport:
 | `SlackNotifier`/`DiscordNotifier` | `us_market`, `exchange_rate`, 집계 property |
 | HTML 리포트 (별도 작업) | 전체 |
 
-**시그니처 안정화**
-
+### 1.시그니처 안정화
 원본 `send_slack_message(webhook_url, us_results, kr_results, us_market, kr_market, usd_krw, report_url)` — 파라미터 7개. 새 인자가 늘 때마다 모든 호출처 수정. `DailyReport` 단일 입력으로 통합하면 시그니처 안정.
 
-**집계 property**
+### 2.집계 property
 
 원본은 `notification_service.py`에서 `_prepare_notification_data()`가 상승/하락 카운트, top gainer/loser를 매번 계산. 어댑터별 중복. 도메인 property로 한 번 두면 `report.us_up_count` 한 줄로 접근.
 
-**`top_gainer`의 빈 리스트 위험**
+### 3.`top_gainer`의 빈 리스트 위험
 
-`us_stocks=[]`일 때 `max()`가 `ValueError`로 터진다. `StockFetcher`가 "모두 실패 시 예외"라 빈 리스트 도달 일은 정상 흐름에선 없지만, 도메인이 강제하지는 않음. `Phase 3`(`Error Strategy`)에서 검증 추가 검토.
+`us_stocks=[]`일 때 `max()`가 `ValueError`로 터진다. `StockFetcher`가 "모두 실패 시 예외"라 빈 리스트 도달 일은 정상 흐름에선 없지만, 도메인이 강제하지는 않음.
 
 ## 디렉토리 구조
-
 ```
 src/
 ├── domain/

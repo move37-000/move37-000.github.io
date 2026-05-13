@@ -1,5 +1,5 @@
 ---
-title: Daily Stock Bot 리팩토링 - 2. 
+title: Daily Stock Bot 리팩토링 - 2-a. Port 설계
 date: 2026-05-12
 categories: [Python, Project]
 tags: [python, refactoring, hexagonal-architecture, port-adapter, protocol, dependency-injection]
@@ -116,7 +116,7 @@ class YFinanceFetcher(StockFetcher):    # 명시적 상속
 | B | `IndexSnapshot.name` 필드 제거 |
 | C | 호출측이 `(symbol, name)` 둘 다 전달 |
 
-B는 고민하지도 않고 제외. A는 매핑이 어댑터마다 중복. C안 인`fetch(symbol: str, name: str)`으로 시그니처 수정.
+B는 고민하지도 않고 제외. A는 매핑이 어댑터마다 중복. C안인`fetch(symbol: str, name: str)`으로 시그니처 수정.
 
 `StockFetcher.fetch(tickers: dict[str, str])`가 심볼-이름 매핑을 받는 것과 같은 패턴. 
 

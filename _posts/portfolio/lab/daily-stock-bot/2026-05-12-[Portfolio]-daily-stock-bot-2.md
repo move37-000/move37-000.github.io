@@ -124,7 +124,7 @@ B는 고민하지도 않고 제외. A는 매핑이 어댑터마다 중복. C안 
 원본 `fetch_usd_krw()`는 내부적으로 `_fetch_single_index()`를 호출(지수와 동일 함수 재사용). `yfinance API` 입장에서 환율과 지수는 같은 엔드포인트지만 **도메인 레벨에선 별개 개념**. `IndexSnapshot`과 `ExchangeRate`가 별개 타입이라면 `Port`도 별개로 두는 게 맞다.
 
 ### `MarketNewsFetcher`
-이 `Port` docstring은 처음엔 실패 전략 명시가 없었다. `2-c`에서 `YFinanceMarketNewsFetcher` 구현 중 "여기 실패는 어떻게 처리하지?"라는 질문이 생겨 docstring 보강. 시장 뉴스는 리포트 본체에 비해 보조 정보 → 실패 시 `[]` 반환이 자연스러움.
+시장 뉴스는 리포트 본체에 비해 보조 정보 → 실패 시 `[]` 반환이 자연스러움.
 
 ## DailyReport — 공용 입력 도메인 신설
 `Notifier`와 `MarketAnalyzer`가 받는 `DailyReport`는 `Phase 1`에 없던 새 도메인.

@@ -58,7 +58,9 @@ image:
 ### `YFinanceFetcher` — 종목 단위 실패 격리
 ```python
 def fetch(self, tickers: dict[str, str]) -> list[StockSnapshot]:
-    results, errors = [], []
+    results: list[StockSnapshot] = []
+    errors: list[tuple[str, Exception]] = []
+    
     for symbol, name in tickers.items():
         try:
             snapshot = self._fetch_one(symbol, name)
@@ -73,19 +75,16 @@ def fetch(self, tickers: dict[str, str]) -> list[StockSnapshot]:
     return results
 ```
 
-원본 패턴은 `except Exception + log + continue`. **외형이 비슷하지만 의도가 다르다**.
+| 원본                               | 신규                                |
+|:---------------------------------|:----------------------------------|
+| `except` 후 **마치 전체 성공처럼 return** | `errors` 누적, 모두 실패 시 예외로 표면화      |
+| 호출측에 실패 정보 전달 안 함                | 예외 메시지에 실패 종목 목록 포함               |
+| 뉴스/주가 실패 구분 없음                   | 뉴스 실패는 `news=[]` 격리, 주가 실패는 종목 스킵 |
 
-| 원본 | 새 어댑터 |
-| :--- | :--- |
-| `except` 후 **전체 성공으로 위장** | `errors` 누적, 모두 실패 시 예외로 표면화 |
-| 호출측에 실패 정보 전달 안 함 | 예외 메시지에 실패 종목 목록 포함 |
-| 뉴스/주가 실패 구분 없음 | 뉴스 실패는 `news=[]` 격리, 주가 실패는 종목 스킵 |
-
-"부분 성공 허용"은 배치 잡의 성질이지 에러 처리 철학의 후퇴가 아니다.
+부분 성공 허용은 예외 처리 포기가 아니라, 서비스 연속성을 위한 의도적인 제어 전략이다.
 
 ### `YFinanceIndexFetcher` — 원본의 `fast_info` 보정 로직 폐기
-
-원본은 한국 지수(KOSPI/KOSDAQ) 어제 데이터 누락 시 `ticker.fast_info['last_price']`로 강제 주입했다. 자세히 보면 이 로직은 `OHLCV` 모든 컬럼을 `last_price` 하나로 덮어쓴다. **거래량이 가격값이 되는 명백한 버그 성격**.
+원본은 한국 지수(KOSPI/KOSDAQ)에서 어제 데이터 누락 시 `ticker.fast_info['last_price']`로 강제 주입했다. 돌아보면 이 로직은 `OHLCV` 모든 컬럼을 `last_price` 하나로 덮어쓴다. **거래량이 가격값이 되는 버그였다**.
 
 `Phase 2` 어댑터에서는 이 로직을 **재이식하지 않고 삭제**. 미국 지수에는 필요 없고, 한국 지수는 `Phase 7`로 이동. `Phase 7` 재설계 시점에 이 로직을 **복사하면 안 된다**. 근본 원인(시간대 이슈? `yfinance`의 아시아 시장 지연?)부터 규명해야 한다.
 

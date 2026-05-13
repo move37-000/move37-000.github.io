@@ -31,15 +31,20 @@ image:
 
 ## 어댑터 4개의 공통 패턴
 
-| 항목 | 적용 방식 |
-| :--- | :--- |
-| 설정 의존 | 생성자 주입 (모듈 상수 import 금지) |
-| 실패 처리 | `Port` 규약별로 다름 (아래 어댑터별 표) |
-| 순수 변환 헬퍼 | `@staticmethod` |
-| `self._news_limit` 사용 헬퍼 | 일반 메서드 |
+| 항목 | 적용 방식                             |
+| :--- |:----------------------------------|
+| 설정 의존 | **생성자 주입 (모듈 상수 import 금지)**      |
+| 실패 처리 | `Port` 규약별로 다름 (아래 어댑터별 표)        |
+| 순수 변환 헬퍼 | `@staticmethod`                   |
+| `self._news_limit` 사용 헬퍼 | 일반 메서드                            |
 | `Port` 상속 | 명시적 상속 (`class X(StockFetcher):`) |
 
-생성자 주입을 강조하는 이유. 원본은 `from src.config import NEWS_LIMIT`처럼 모듈 상수를 어댑터 내부에서 직접 import. 이러면 (1) 테스트에서 `NEWS_LIMIT` 바꾸려면 `config` monkey-patch 필요, (2) 생성자만 보고는 어댑터 의존성 파악 불가. **의존성은 생성자 시그니처에 명시돼야 한다**. `Spring`이 생성자 주입을 권장하는 것과 같은 이유.
+### 생성자 주입을 강조하는 이유
+원본은 `from src.config import NEWS_LIMIT`처럼 모듈 상수를 어댑터 내부에서 직접 import 했다. 이러면 
+1. 테스트에서 `NEWS_LIMIT` 바꾸려면 `config monkey-patch` 필요 
+2. 생성자만 보고는 어댑터 의존성 파악 불가. **의존성은 생성자 시그니처에 명시돼야 한다**.
+
+> `Spring`이 생성자 주입을 권장하는 것과 같은 이유다.
 
 ## 어댑터 4개 — 책임과 특이점
 
@@ -50,10 +55,7 @@ image:
 | `YFinanceExchangeRateFetcher` | (없음) | `ExchangeRate` | `history` 필드 없음 → 최소 데이터(`"5d"`) |
 | `YFinanceMarketNewsFetcher` | (없음) | `list[NewsItem]` | `^GSPC` 뉴스를 시장 뉴스로 사용 |
 
-각 어댑터의 의미 있는 결정만 짚는다.
-
 ### `YFinanceFetcher` — 종목 단위 실패 격리
-
 ```python
 def fetch(self, tickers: dict[str, str]) -> list[StockSnapshot]:
     results, errors = [], []

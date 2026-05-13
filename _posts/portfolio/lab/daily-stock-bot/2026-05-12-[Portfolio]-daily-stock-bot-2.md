@@ -204,18 +204,17 @@ src/
 `adapter/`는 다음 글(`2-b`)에서 추가.
 
 ## 결과 분석
-
 | 항목 | Before | After |
 | :--- | :--- | :--- |
 | 외부 라이브러리 의존 | 서비스가 `yfinance` 직접 호출 | `Port`에만 의존 |
 | 테스트 | 네트워크 필수 | mock 주입 가능 |
 | 교체 비용 | 호출하는 모든 곳 수정 | 어댑터 교체로 끝 |
 | 시그니처 안정성 | 인자 7~8개 누적 | `DailyReport` 단일 입력 |
-| 집계 로직 위치 | 어댑터마다 반복 | 도메인 property |
+| 집계 로직 위치 | 어댑터마다 반복 | 도메인 `property` |
 
 ## 이번 글에서 배운 것
 
-1. **`Port` 설계는 처음부터 완벽할 수 없다**. `IndexFetcher.fetch` 시그니처 변경, `MarketNewsFetcher` docstring 보강. `Port`는 어댑터 구현과 함께 다듬어진다.
+1. **설계는 처음부터 완벽할 수 없다**. `IndexFetcher.fetch` 시그니처 변경, 파일별 `docstring` 보강 등. 처음 설계한`Port`가 어댑터 구현 시점에 더욱 다듬어졌다.
 2. **`Port` 개수는 도메인이 결정한다**. `Phase 0`에서 4개로 추산했지만 도메인 검토 후 6개. `Phase 1`의 가치가 드러난 지점.
 3. **`Protocol`은 명시적 상속과 구조적 서브타이핑을 모두 허용**. 어댑터는 명시적(에디터 지원), 테스트 mock은 구조적(작성 부담 적음).
 4. **실패 전략은 `Port`별로 다르다**. 모두 "예외 전파"가 아님. 보조 정보 `Port`(`MarketNewsFetcher`, 뉴스 격리된 `StockFetcher`)는 격리. `Port` docstring에 명시.

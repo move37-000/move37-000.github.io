@@ -102,14 +102,12 @@ def analyze(self, report: DailyReport) -> str:
 
 모델별 제약사항이 복잡해 풀백이 반필수다. 풀백은 어댑터의 구현 디테일이지 추상화 대상이 아니기에 `FallbackMarketAnalyzer` 같은 `Composite` 패턴으로 별도 어댑터를 만들지 않고 어댑터 내부에 포함.
 
-원본 대비 두 가지 변경.
-
 | 항목 | 원본 | 어댑터 |
 | :--- | :--- | :--- |
 | API 키 누락 | `None` 반환 | 생성자에서 `ValueError` (fail-fast) |
 | 모든 모델 실패 | `None` 반환 | `RuntimeError` 발생 |
 
-`None` 반환은 호출측이 분석 실패와 빈 결과를 구분 못 함. 예외 전파가 정직.
+`None` 반환은 호출측이 분석 실패와 빈 결과를 구분하지 못한다.
 
 ### `prompt_builder.py` — 원본 프롬프트의 결함 보강
 

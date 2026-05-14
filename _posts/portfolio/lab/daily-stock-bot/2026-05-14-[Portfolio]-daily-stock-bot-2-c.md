@@ -1,5 +1,5 @@
 ---
-title: Daily Stock Bot 리팩토링 - 2-c. Notifier · Analyzer · 조립
+title: Daily Stock Bot 리팩토링 - 2-c. main.py 조립
 date: 2026-05-14
 categories: [Python, Project]
 tags: [python, refactoring, hexagonal-architecture, adapter, dependency-injection, fail-fast, exit-code]
@@ -18,7 +18,7 @@ image:
 
 ## 시작하기 전에
 
-### 1. HTML 리포트 어댑터 누락 — Phase 0 로드맵의 또 다른 공백
+### 1. HTML 리포트 어댑터 누락
 `Phase 0` 로드맵에는 `Notifier`/`Analyzer` 어댑터는 있었지만 **HTML 리포트 생성 어댑터가 없다**. 원본 `main.py`의 `generate_report()`가 HTML을 만들어 `GitHub Pages`에 배포했는데, `Phase 2` 에서 누락이 되어버렸다.
 
 → `Phase 2`에서는 HTML 리포트 생성을 **제외**. `Notifier`의 `report_url` 인자는 외부에서 주어진다는 전제로 유지(이전 빌드의 HTML이 `GitHub Pages`에 남아있으면 그대로 사용). HTML 리포트 어댑터는 별도 작업으로 추가 예정.
@@ -29,7 +29,7 @@ image:
 > **외부 의존성(`API_KEY`, `webhook_url`)의 누락은 어댑터 생성 시점에 잡는다.** 사용 시점(`send()` 호출 시)에 잡으면 늦다.
 
 ### 3. `DailyReport.analysis` 필드 추가
-`MarketAnalyzer.analyze()` 결과를 담을 자리. `DailyReport`에 `analysis: str | None = None` 필드를 추가. AI 분석은 보조 정보라 실패 시 `None` 유지 — 호출측이 `try/except`로 처리한다.
+`MarketAnalyzer.analyze()` 결과를 담을 자리. `DailyReport`에 `analysis: str | None = None` 필드를 추가. AI 분석은 보조 정보라 실패 시 `None` 으로 유지하며 호출측이 `try/except`로 처리한다.
 
 ## 알림 어댑터 — `SlackNotifier` / `DiscordNotifier`
 

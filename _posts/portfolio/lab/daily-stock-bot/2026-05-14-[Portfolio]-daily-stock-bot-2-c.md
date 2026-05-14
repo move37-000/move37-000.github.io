@@ -100,7 +100,7 @@ def analyze(self, report: DailyReport) -> str:
     raise RuntimeError(f"모든 Gemini 모델 실패: {errors}")
 ```
 
-폴백 체인은 `Gemini`의 운영 특성. 모델별 할당량이 복잡해 폴백이 사실상 필수. 이 어댑터의 구현 디테일이지 상위 추상화 대상이 아니다. 따라서 `FallbackMarketAnalyzer` 같은 `Composite` 패턴으로 별도 어댑터를 만들지 않고 어댑터 내부에 포함.
+모델별 제약사항이 복잡해 풀백이 반필수다. 풀백은 어댑터의 구현 디테일이지 추상화 대상이 아니기에 `FallbackMarketAnalyzer` 같은 `Composite` 패턴으로 별도 어댑터를 만들지 않고 어댑터 내부에 포함.
 
 원본 대비 두 가지 변경.
 

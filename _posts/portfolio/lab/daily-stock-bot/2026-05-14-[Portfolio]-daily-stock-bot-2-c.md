@@ -57,7 +57,7 @@ class SlackNotifier(Notifier):
 ```
 
 ### `AbstractNotifier`를 만들지 않은 이유
-`Java/Spring`이라면 `AbstractWebhookNotifier`에 공통 인프라(HTTP 호출, 타임아웃, 예외 전파)를 모으고 자식들이 `buildPayload()`만 `override`하는 패턴이 자연스럽다. 하지만
+`Java/Spring`이라면 `AbstractWebhookNotifier`에 공통 인프라(HTTP 호출, 타임아웃, 예외 전파)를 모으고 자식들이 `buildPayload()`만 `override`하는 패턴이 자연스럽다. 하지만 여기선 만들지 않았다.
 
 - 현재 `Notifier` 2개. `Rule of Three` 해당 안됨.
 - 실제 중복은 `requests.post + raise_for_status + timeout` 3줄 정도.
@@ -100,7 +100,7 @@ def analyze(self, report: DailyReport) -> str:
     raise RuntimeError(f"모든 Gemini 모델 실패: {errors}")
 ```
 
-모델별 제약사항이 복잡해 풀백이 반필수다. 풀백은 어댑터의 구현 디테일이지 추상화 대상이 아니기에 `FallbackMarketAnalyzer` 같은 `Composite` 패턴으로 별도 어댑터를 만들지 않고 어댑터 내부에 포함.
+모델별 제약사항이 복잡해 폴백이 반필수다. 폴백은 어댑터의 구현 디테일이지 추상화 대상이 아니기에 `FallbackMarketAnalyzer` 같은 `Composite` 패턴으로 별도 어댑터를 만들지 않고 어댑터 내부에 포함.
 
 | 항목 | 원본 | 어댑터 |
 | :--- | :--- | :--- |

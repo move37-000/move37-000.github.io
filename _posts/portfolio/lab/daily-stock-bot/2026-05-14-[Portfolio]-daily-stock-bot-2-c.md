@@ -109,9 +109,8 @@ def analyze(self, report: DailyReport) -> str:
 
 `None` 반환은 호출측이 분석 실패와 빈 결과를 구분하지 못한다.
 
-### `prompt_builder.py` — 원본 프롬프트의 결함 보강
-
-`build_prompt(report: DailyReport) -> str` 모듈 함수. `DailyReport`에서 지수·환율·종목 정보를 뽑아 자연어 데이터 섹션 + 작성 규칙을 조합한 프롬프트 문자열을 만든다.
+### `prompt_builder.py`
+`DailyReport`에서 지수/환율/종목 + 작성 규칙을 조합한 프롬프트 문자열을 만든다.
 
 원본 프롬프트의 결함들을 함께 보강했다.
 

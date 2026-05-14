@@ -159,15 +159,10 @@ if analyzer is not None:
         logger.error(f"AI 분석 실패: {e}", exc_info=True)
 ```
 
-AI 실패는 `report.analysis = None` 유지 — 알림 전송은 계속.
-
 ### exit code 정책
-**알림 1개라도 성공하면 exit 0**. 둘 다 실패해야 exit 1. `GitHub Actions`가 이 exit code로 실패를 감지하고 알림을 보낸다. Slack 일시 장애 + Discord 정상이면 GitHub Actions까지 알림이 가는 건 과한 알림이라 거부.
-
-> "에러 처리는 사용자에게 노출하지 않는다"가 이 봇의 원칙. GitHub Actions가 모니터링 채널이고, Slack/Discord는 사용자 알림 채널. **운영자 알림과 사용자 알림이 분리**돼 있다.
+**알림 1개라도 성공하면 exit 0**. 둘 다 실패해야 exit 1. `GitHub Actions`가 이 exit code로 실패를 감지하고 알림을 보낸다.
 
 ## 디렉토리 구조
-
 ```
 src/
 ├── adapter/
@@ -198,7 +193,7 @@ src/
 └── main.py
 ```
 
-## 결과 분석
+## 개선
 
 ### `main.py` 변화
 
@@ -220,8 +215,6 @@ src/
 | 외부 의존 위치 | 서비스 레이어 | 어댑터 레이어로 격리 |
 | 테스트 가능성 | 네트워크 필수 | `Port` mock 주입 가능 |
 | `Phase 7` KR 추가 비용 | 도메인·로직 모두 수정 | **어댑터만 추가** (`Port`·도메인 불변 가설) |
-
-마지막 행이 `Phase 7`에서 검증될 가설. `Port/Adapter` 패턴이 실제로 약속한 가치를 증명하는 시점.
 
 ## 이번 글에서 배운 것
 

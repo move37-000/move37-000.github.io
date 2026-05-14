@@ -119,24 +119,17 @@ def analyze(self, report: DailyReport) -> str:
 | 한국어 표현 | "최대한 참고하면서 설명도" | 자연스럽게 정리 |
 | 한국장 데이터 | 포함 | 제외 (`Phase 2` 범위) |
 
-### `DailyReport.us_news`는 프롬프트에서 미사용
-`DailyReport`에 `us_news` 필드가 있지만 `prompt_builder`는 사용하지 않는다. 원본 프롬프트도 뉴스를 AI에 넘기지 않았다.
-
-이 비대칭은 의도된 것. `DailyReport`는 "그날 수집된 시장 정보 전체 번들"이고, 사용처가 필요한 필드만 쓴다. `SlackNotifier`도 `us_news`는 안 쓰고 HTML 리포트만 사용. **도메인은 품고, 어댑터는 취사선택**. `Phase 7` 이후 "뉴스를 프롬프트에 넣어볼까?"라는 실험이 생기면 `prompt_builder`만 수정. 도메인·`Port` 불변.
-
 ## `main.py` — DI 조립
-
-8개 어댑터를 묶고, 데이터를 수집하고, 알림을 보내는 흐름. 핵심 패턴만 짚는다.
+8개 어댑터를 묶고, 데이터를 수집하고, 알림을 보낸다.
 
 ### 옵셔널 어댑터 패턴
-
 ```python
 slack_notifier: Notifier | None = None
 if SLACK_WEBHOOK_URL:
     slack_notifier = SlackNotifier(webhook_url=SLACK_WEBHOOK_URL)
 ```
 
-`webhook_url`/`api_key`가 누락된 경우 어댑터를 만들지 않고 `None` 유지. 사용 시점에 `if notifier is not None:` 분기. `Java/Spring`의 `@ConditionalOnProperty` 빈 조건부 생성, `Optional<Notifier>` 주입과 의미상 동일.
+`webhook_url`/`api_key`가 누락된 경우 어댑터를 만들지 않고 `None` 유지. 사용 시점에 `if notifier is not None:` 분기처리를 한다. 
 
 ### 단계별 예외 처리
 

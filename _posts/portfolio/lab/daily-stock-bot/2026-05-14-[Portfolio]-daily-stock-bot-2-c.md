@@ -56,8 +56,6 @@ class SlackNotifier(Notifier):
         response.raise_for_status()
 ```
 
-`raise_for_status()`로 HTTP 실패를 예외 전파.
-
 ### `AbstractNotifier`를 만들지 않은 이유
 `Java/Spring`이라면 `AbstractWebhookNotifier`에 공통 인프라(HTTP 호출, 타임아웃, 예외 전파)를 모으고 자식들이 `buildPayload()`만 `override`하는 패턴이 자연스럽다. 하지만
 

@@ -143,7 +143,7 @@ if SLACK_WEBHOOK_URL:
 | AI 분석 | 실패해도 진행 (`analysis = None`) |
 | Slack/Discord 전송 | 모두 실패 시에만 `sys.exit(1)` |
 
-단계별 `try/except`로 분리하는 이유. (1) 어느 단계 실패인지 로그 명확. (2) `Phase 3` 재시도 데코레이터 도입 시 단계별 정책 다르게 적용 가능.
+어느 단계 실패인지 명확하게 하기 위해 단계별 `try/except`로 분리했다.
 
 ### `DailyReport` 조립 + AI 분석
 `DailyReport`는 `frozen=True` (immutable). AI 분석 결과를 나중에 채우려면 `dataclasses.replace`를 쓴다.

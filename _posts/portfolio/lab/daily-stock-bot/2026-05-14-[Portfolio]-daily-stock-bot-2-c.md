@@ -41,7 +41,8 @@ image:
 | 리포트 버튼 | Block Kit `actions` 블록 | 마크다운 링크 |
 | 메시지 조립 메서드 | `_build_message` + `_build_blocks` | `_build_description` |
 
-생성자 / 예외 처리 / 타임아웃 정책은 동일.
+생성자 / 예외 처리 / 타임아웃 정책은 동일하다.
+
 ```python
 class SlackNotifier(Notifier):
     def __init__(self, webhook_url: str, timeout: float = 10.0) -> None:

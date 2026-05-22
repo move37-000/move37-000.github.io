@@ -2,13 +2,12 @@
 
 source "https://rubygems.org"
 
-# 1. JSON 관련 빌드 에러 방지를 위해 버전 고정
+# 1. JSON 빌드 오류 방지
 gem "json", ">= 2.7.2"
 
-gemspec
-
-# Chirpy 테마 사용 시 필요한 의존성 명시 (필요한 경우)
-gem "jekyll-theme-chirpy", "~> 7.0"
+# 2. gemspec을 사용하지 않고 직접 젬을 명시합니다.
+# (Chirpy 테마 구조상 로컬을 안 쓰시면 이 방식이 가장 안전합니다)
+gem "jekyll-theme-chirpy", "~> 7.4"
 
 gem "html-proofer", "~> 5.0", group: :test
 

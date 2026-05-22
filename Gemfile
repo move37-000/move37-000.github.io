@@ -2,13 +2,14 @@
 
 source "https://rubygems.org"
 
-# 1. JSON 빌드 오류 방지
-gem "json", ">= 2.7.2"
+# 1. JSON 상수를 미리 로드하여 NameError 방지
+gem "json", "2.7.2"
 
-# 2. gemspec을 사용하지 않고 직접 젬을 명시합니다.
-# (Chirpy 테마 구조상 로컬을 안 쓰시면 이 방식이 가장 안전합니다)
+# 2. 문제의 sass-embedded를 안정적인 버전으로 강제 고정
+gem "sass-embedded", "1.80.3"
+
+# 3. 테마 및 의존성 설정
 gem "jekyll-theme-chirpy", "~> 7.4"
-
 gem "html-proofer", "~> 5.0", group: :test
 
 platforms :mingw, :x64_mingw, :mswin, :jruby do

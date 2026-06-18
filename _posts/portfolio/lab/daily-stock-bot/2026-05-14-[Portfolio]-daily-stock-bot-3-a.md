@@ -18,7 +18,7 @@ image:
 ## 예외 계층 구조
 어떤 예외가 필요한가?
 
-- `NetworkError` — 연결 실패, 타임아웃, DNS. **재시도 가능**. 
+- `NetworkError` — 연결 실패, 타임아웃, DNS. **재시도 가능**.  
 - `ParseError` — 응답은 왔는데 스키마가 깨짐 (`KeyError`, `IndexError`, `response.text is None`). **재시도 무의미**.
 - `ApiResponseError` — `4xx`/`5xx`. webhook 거부, Gemini quota 초과 등.
 

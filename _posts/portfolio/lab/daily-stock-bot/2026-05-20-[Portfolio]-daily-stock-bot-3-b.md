@@ -61,11 +61,11 @@ def _fetch_one(self, symbol: str, name: str) -> StockSnapshot | None:
 yfinance가 자체 예외를 제공하지 않아서 `requests.RequestException`을 직접 잡는다. yfinance 내부가 `requests`를 쓰고 그 예외를 그대로 던지기 때문이다.
 
 ### 2. 전 종목 실패
-종목별 `try/except`로 격리하고, 모든 종목이 실패하면 `NetworkError` 로 처리하도록 했다.
+종목별 `try/except`로 격리하고, 모든 종목이 실패하면 `NetworkError`로 처리한다.
 
 yfinance의 일시적 실패는 **전체 단위로 온다.** 종목 10개가 다 실패했다는건 "각 종목의 실패가 우연히 겹쳤다"가 아니라 "연결 자체가 죽었다"가 확률상 훨씬 크다. 그래서 `NetworkError`. `@retry`가 이걸 받아 3회까지 재시도한다.
 
-`AdapterError`(루트) 직접 던지는 선택도 있지만, `@retry`가 재시도를 안 해버리게 된다(`_is_retryable`이 `False`). **재시도 가치가 가장 큰 자리에서 재시도를 없애버리는 셈** 이 된다.
+`AdapterError`(루트) 직접 던지는 선택도 있지만, `@retry`가 재시도를 안 해버리게 된다(`_is_retryable: False`). **재시도 가치가 가장 큰 자리에서 재시도를 없애버리는 셈** 이 된다.
 
 > 종목별 `try/except`가 `NetworkError`와 `ParseError`를 둘 다 잡으니까 `errors` 리스트에 `ParseError`도 섞일 수 있다. "전 종목이 다 `ParseError`였는데 `NetworkError`로 던지는" 케이스가 가능하다.(yfinance 응답 스키마가 통째로 바뀌어서 전 종목 파싱이 깨진 경우 등) 이때 `@retry`가 작동하지만 그렇게까지 정밀 분류를 해야하는 스케일의 작업이 아니라고 생각해서 `NetworkError` 로 통일했다.
 

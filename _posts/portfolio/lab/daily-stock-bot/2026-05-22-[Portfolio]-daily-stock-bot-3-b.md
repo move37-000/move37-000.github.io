@@ -9,7 +9,7 @@ image:
 ## Daily Stock Bot 리팩토링 #3-b
 
 ### 이번 Phase의 목표
-`3-a`에서 `common/errors.py`와 `common/retry.py`를 새로 만들었다. 어댑터 7개와 `main.py`가 이 구조를 사용하지 않으면 이 소스들은 의미가 없다. `3-b`는 그 의미를 만드는 작업이다.
+`3-a`에서 `common/errors.py`와 `common/retry.py`를 새로 만들었다. 어댑터 7개와 `main.py`가 이 구조를 사용하지 않으면 이 소스들은 의미가 없다. `3-b`는 그 의미를 만드는 작업이다..
 
 **예외 계층의 진짜 가치는 어댑터가 아니라 호출측에서 드러난다.** 어댑터에 `NetworkError`/`ParseError`/`ApiResponseError`를 넣는 작업은 절반에 불과하다..
 

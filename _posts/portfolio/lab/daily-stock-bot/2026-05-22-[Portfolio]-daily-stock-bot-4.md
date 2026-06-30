@@ -89,7 +89,7 @@ def retry(max_attempts: int, delay: float, sleep_fn=time.sleep):
 
 `Python`에서는 과한 추상화다. 테스트가 아닌 소스 시그니처에 **테스트 전용 파라미터**가 박힌다. 호출측 코드가 다 떠안고, "왜 `sleep_fn`이 인자에 있지?"라는 의문이 발생한다.
 
-### C안 - `mocker.patch`는 모듈 네임스페이스를 갈아치운다
+### C안(선택) - `mocker.patch`는 모듈 네임스페이스를 갈아치운다
 ```python
 mock_sleep = mocker.patch("src.common.retry.time.sleep")
 ```

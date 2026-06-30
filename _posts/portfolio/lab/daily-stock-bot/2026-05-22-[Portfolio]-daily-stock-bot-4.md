@@ -109,8 +109,8 @@ mock_sleep = mocker.patch("src.common.retry.time.sleep")
 
 ```python
 def test_전종목_실패시_retry_3회_발동(self, mocker):
-        mock_sleep = mocker.patch("src.common.retry.time.sleep")
-        ticker_call_count = 0
+    mock_sleep = mocker.patch("src.common.retry.time.sleep")
+    ticker_call_count = 0
 
     def _failing_ticker(*_args, **_kwargs):
         nonlocal ticker_call_count

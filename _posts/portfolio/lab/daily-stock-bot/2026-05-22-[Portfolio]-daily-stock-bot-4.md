@@ -159,4 +159,4 @@ def test_전종목_실패시_retry_3회_발동(self, mocker):
 ## What's Next
 - `repository/` 등 미사용 코드 제거
 - `requirements.txt` 버전 고정
-- 운영 품질 정리
+- 정리

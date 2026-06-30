@@ -66,11 +66,11 @@ mocker.patch("src.adapter.yfinance_fetcher.yf.Ticker", return_value=ticker)
 
 `@retry`는 `delay=2.0`초 고정이다. 어댑터에는 `@retry(3, 2.0)`이 박혀 있다. 테스트가 어댑터를 실호출하면 실패 케이스마다 최소 4초씩 잡아먹는다.
 
-| 안 | 방법 |
-|---|---|
-| A | `@retry(delay=0)`을 데코레이터로 다시 호출 | 
-| B | `@retry`에 `sleep_fn` 파라미터 주입 | 
-| C | `mocker.patch("src.common.retry.time.sleep")` | 
+| 안 | 방법 | 채택     |
+|---|---|--------|
+| A | `@retry(delay=0)`을 데코레이터로 다시 호출 |     |
+| B | `@retry`에 `sleep_fn` 파라미터 주입 |     |
+| C | `mocker.patch("src.common.retry.time.sleep")` | **채택** |
 
 ### A안
 어댑터 소스의 `@retry(3, 2.0)`을 안 거친다. 테스트가 자기만의 `@retry(delay=0)` 경로를 따로 만든다.
@@ -89,7 +89,7 @@ def retry(max_attempts: int, delay: float, sleep_fn=time.sleep):
 
 `Python`에서는 과한 추상화다. 테스트가 아닌 소스 시그니처에 **테스트 전용 파라미터**가 박힌다. 호출측 코드가 다 떠안고, "왜 `sleep_fn`이 인자에 있지?"라는 의문이 발생한다.
 
-### C안(선택) - `mocker.patch`는 모듈 네임스페이스를 갈아치운다
+### C안 - `mocker.patch`는 모듈 네임스페이스를 갈아치운다
 ```python
 mock_sleep = mocker.patch("src.common.retry.time.sleep")
 ```
@@ -139,7 +139,7 @@ def test_전종목_실패시_retry_3회_발동(self, mocker):
 
 > 하지만 이 비용보다 원본 소스 시그니처를 건들고 싶지 않았다. 그리고 무엇보다 어댑터 개수가 많지도 않아서(테스트 케이스가 적어서) mock 안으로 적용했다.
 
-### `Java`의 `mockStatic`
+### `Java`의 `mockStatic`과 비교
 `Java` 에는 "`mockStatic` 같은 바이트코드 조작 mocking은 어쩔 수 없는 외부 라이브러리가 아니면 금지"라는 암묵적인 규칙이 있다.
 
 - **격리가 깨진다.** `try-with-resources`로 닫는 걸 깜빡하면 패치가 다음 테스트로 샌다.

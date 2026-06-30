@@ -100,7 +100,7 @@ mock_sleep = mocker.patch("src.common.retry.time.sleep")
 
 **첫 인자가 `time.sleep`이 아니라 `src.common.retry.time.sleep`**이라는 점이다. `time` 라이브러리 원본은 안 건드린다. `retry.py`가 보고 있는 `time.sleep`만 갈아치운다. 어댑터에서 `yf.Ticker`를 patch한 것과 같은 메커니즘이다.
 
-이게 가능한 이유는 **`Python`의 모듈이 1급 객체이고, 모듈 속성을 런타임에 교체할 수 있기 때문**이다. `Java`의 `import`는 컴파일 타임에 해소되어 런타임 교체가 불가능하다. 
+이게 가능한 이유는 **`Python`의 모듈이 일반 변수나 데이터처럼 다뤄지고, 모듈 속성을 런타임에 교체할 수 있기 때문**이다. `Java`의 `import`는 컴파일 타임에 결정되어 런타임 교체가 불가능하다. 
 
 `pytest-mock`의 `mocker` fixture는 `unittest.mock.patch`를 테스트 환경에 묶은 것이다. 함수 끝에 자동 복원되므로 다른 테스트로 새는 일이 없다.
 

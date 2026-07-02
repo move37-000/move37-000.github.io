@@ -1,9 +1,8 @@
 ---
-title: 동시성 제어 - 4. Redis DECR + Kafka 비동기 처리
+title: "[동시성 제어] 4. Redis DECR + Kafka 비동기 처리"
 date: 2026-01-26
 categories: [Spring, Project]
 tags: [spring-boot, redis, kafka, async, concurrency]
-image: 
 ---
 
 ## 동시성 제어 #4 - Redis DECR + Kafka 비동기 처리

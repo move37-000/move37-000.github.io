@@ -1,9 +1,8 @@
 ---
-title: 동시성 제어 - 5. 데이터 정합성 강화 - Lua 스크립트 + Kafka 안정성
+title: "[동시성 제어] 5. 데이터 정합성 강화 - Lua 스크립트 + Kafka 안정성"
 date: 2026-01-27
 categories: [Spring, Project]
 tags: [spring-boot, redis, kafka, async, concurrency]
-image: 
 ---
 
 ## 동시성 제어 #5 - 데이터 정합성 강화: Lua 스크립트 + Kafka 안정성

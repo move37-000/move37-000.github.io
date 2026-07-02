@@ -1,9 +1,8 @@
 ---
-title: 동시성 제어 - 3. Redis 분산 락
+title: "[동시성 제어] 3. Redis 분산 락"
 date: 2026-01-21
 categories: [Spring, Project]
 tags: [spring-boot, redis, redisson, distributed-lock, concurrency]
-image: 
 ---
 
 ## 동시성 제어 #3 - Redis 분산 락

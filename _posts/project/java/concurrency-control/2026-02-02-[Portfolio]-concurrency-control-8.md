@@ -1,9 +1,8 @@
 ---
-title: 동시성 제어 - 8. Kafka 파티션 확장 - Consumer 병렬 처리
+title: "[동시성 제어] 8. Kafka 파티션 확장 - Consumer 병렬 처리"
 date: 2026-02-02
 categories: [Spring, Project]
 tags: [kafka, partition, consumer, concurrency]
-image: 
 ---
 
 ## 동시성 제어 #8 - Kafka 파티션 확장

@@ -3,7 +3,6 @@ title: Daily Stock Bot 리팩토링 - 3-b. 어댑터 수정과 호출 정리
 date: 2026-05-22
 categories: [Python, Project]
 tags: [python, refactoring, exception-handling, retry, hexagonal-architecture]
-image:
 ---
 
 ## Daily Stock Bot 리팩토링 #3-b

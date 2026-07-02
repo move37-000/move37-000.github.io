@@ -3,7 +3,6 @@ title: Daily Stock Bot 리팩토링 - 0. 프로젝트 분석 및 설계
 date: 2026-04-09
 categories: [Python, Project]
 tags: [python, refactoring, architecture, port-adapter, domain-model, dataclass]
-image:
 ---
 
 ## Daily Stock Bot 리팩토링 #0 — 프로젝트 분석 및 설계

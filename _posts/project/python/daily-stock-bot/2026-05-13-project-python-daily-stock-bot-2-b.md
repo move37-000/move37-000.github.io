@@ -3,7 +3,6 @@ title: Daily Stock Bot 리팩토링 - 2-b. Fetcher 어댑터
 date: 2026-05-13
 categories: [Python, Project]
 tags: [python, refactoring, hexagonal-architecture, adapter, yfinance, pandas, rule-of-three]
-image:
 ---
 
 ## Daily Stock Bot 리팩토링 #2-b

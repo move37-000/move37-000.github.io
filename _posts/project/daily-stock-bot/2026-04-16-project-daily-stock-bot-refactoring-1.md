@@ -1,7 +1,7 @@
 ---
 title: "[Python Project Refactoring] 1. Domain Model 적용"
 date: 2026-04-16
-categories: [Project, Python, Daily Stock Bot Refactoring]
+categories: [Project, Daily Stock Bot Refactoring]
 tags: [python, refactoring, dataclass, domain-model, type-safety, enum, property]
 ---
 

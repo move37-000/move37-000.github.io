@@ -1,9 +1,8 @@
 ---
 title: "[Python Project Refactoring] 5. 리포트 출력과 마무리"
 date: 2026-07-02
-categories: [Python, Project]
+categories: [Project, Daily Stock Bot Refactoring]
 tags: [python, refactoring, hexagonal-architecture, github-actions, jinja2, fail-fast]
-image:
 ---
 
 ## Daily Stock Bot 리팩토링 #5

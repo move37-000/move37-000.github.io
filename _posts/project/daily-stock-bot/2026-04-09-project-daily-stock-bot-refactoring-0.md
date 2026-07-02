@@ -1,7 +1,7 @@
 ---
 title: "[Python Project Refactoring] 0. 프로젝트 분석 및 설계"
 date: 2026-04-09
-categories: [Project, Python, Daily Stock Bot Refactoring]
+categories: [Project, Daily Stock Bot Refactoring]
 tags: [python, refactoring, architecture, port-adapter, domain-model, dataclass]
 ---
 

@@ -1,7 +1,7 @@
 ---
 title: "[Python Project Refactoring] 4. 테스트"
 date: 2026-06-30
-categories: [Project, Python, Daily Stock Bot Refactoring]
+categories: [Project, Daily Stock Bot Refactoring]
 tags: [python, pytest, pytest-mock, hexagonal-architecture, fake, mock, testing]
 ---
 

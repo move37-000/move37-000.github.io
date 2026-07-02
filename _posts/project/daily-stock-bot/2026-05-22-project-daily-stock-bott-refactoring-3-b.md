@@ -1,7 +1,7 @@
 ---
 title: "[Python Project Refactoring] 3-b. 어댑터 수정과 호출 정리"
 date: 2026-05-22
-categories: [Project, Python, Daily Stock Bot Refactoring]
+categories: [Project, Daily Stock Bot Refactoring]
 tags: [python, refactoring, exception-handling, retry, hexagonal-architecture]
 ---
 

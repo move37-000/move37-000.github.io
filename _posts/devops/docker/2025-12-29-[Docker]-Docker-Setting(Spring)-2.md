@@ -1,7 +1,7 @@
 ---
 title: (Docker) Spring 배포 환경 구축기 - 2. Docker로 MySQL 띄우기 (Volume 설정)
 date: 2025-12-29
-categories: [Docker, 개발환경]
+categories: [DevOps, Docker]
 tags: [Docker, MySQL, Volume]
 description: Docker를 이용한 MySQL 설치와 데이터 보존 방법
 image: 

@@ -1,7 +1,7 @@
 ---
 title: (Docker) Spring 배포 환경 구축기 - 5. application.yml 설정과 Multi-Profile
 date: 2026-01-05
-categories: [Docker, 개발환경]
+categories: [DevOps, Docker]
 tags: [Docker, Spring Boot, application.yml, Multi-Profile]
 description: 파일 분리를 통한 환경별 Spring Boot 설정 최적화
 image: 

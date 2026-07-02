@@ -1,9 +1,8 @@
 ---
 title: "해시, 고의로 원본을 잊어버리는 이유 - 2"
-date: 2026-06-16
+date: 2026-06-17
 categories: [Curiosity, Security]
 tags: [보안, 해시, 비밀번호, bcrypt, scrypt, Argon2id, PBKDF2, 솔트, 페퍼]
-image:
 ---
 
 이번 글에서는 **탐색 공간을 비싸게 만드는** 세 가지 장치(솔트, 느림, 페퍼)들이 실제 알고리즘으로 어떻게 구현되는지 본다.

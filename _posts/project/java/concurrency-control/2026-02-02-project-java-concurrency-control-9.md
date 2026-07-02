@@ -1,7 +1,7 @@
 ---
 title: "[동시성 제어] 9. 프로젝트 정리"
 date: 2026-02-02
-categories: [Spring, Project]
+categories: [Project, Java, Concurrency Control]
 tags: [concurrency, redis, kafka, retrospective]
 ---
 

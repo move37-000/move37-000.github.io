@@ -1,7 +1,7 @@
 ---
 title: "[동시성 제어] 2. 비관적 락"
 date: 2026-01-19
-categories: [Spring, Project]
+categories: [Project, Java, Concurrency Control]
 tags: [spring-boot, jpa, pessimistic-lock, concurrency, select-for-update]
 ---
 

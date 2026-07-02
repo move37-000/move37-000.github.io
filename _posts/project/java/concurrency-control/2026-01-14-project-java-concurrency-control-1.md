@@ -1,7 +1,7 @@
 ---
 title: "[동시성 제어] 1. 낙관적 락"
 date: 2026-01-14
-categories: [Spring, Project]
+categories: [Project, Java, Concurrency Control]
 tags: [spring-boot, jpa, optimistic-lock, concurrency, version]
 ---
 

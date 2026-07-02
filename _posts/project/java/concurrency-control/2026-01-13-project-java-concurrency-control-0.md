@@ -1,7 +1,7 @@
 ---
 title: "[동시성 제어] 0. 프로젝트 설계"
 date: 2026-01-13
-categories: [Spring, Project]
+categories: [Project, Java, Concurrency Control]
 tags: [spring-boot, jpa, architecture, project-setup]
 ---
 

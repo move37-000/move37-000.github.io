@@ -1,7 +1,7 @@
 ---
 title: "[동시성 제어] 7. Reconciliation Batch - 비동기 전환과 정합성 검증"
 date: 2026-01-30
-categories: [Spring, Project]
+categories: [Project, Java, Concurrency Control]
 tags: [kafka, batch, reconciliation, scheduler, async]
 ---
 

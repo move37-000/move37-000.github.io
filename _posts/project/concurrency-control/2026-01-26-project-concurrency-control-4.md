@@ -1,7 +1,7 @@
 ---
 title: "[동시성 제어] 4. Redis DECR + Kafka 비동기 처리"
 date: 2026-01-26
-categories: [Project, Java, Concurrency Control]
+categories: [Project, Concurrency Control]
 tags: [spring-boot, redis, kafka, async, concurrency]
 ---
 

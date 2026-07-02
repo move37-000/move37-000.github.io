@@ -1,7 +1,7 @@
 ---
 title: "[동시성 제어] 6. DLQ를 활용한 실패 메시지 관리"
 date: 2026-01-29
-categories: [Project, Java, Concurrency Control]
+categories: [Project, Concurrency Control]
 tags: [kafka, dlq, retry, spring-retry, dead-letter-queue]
 ---
 

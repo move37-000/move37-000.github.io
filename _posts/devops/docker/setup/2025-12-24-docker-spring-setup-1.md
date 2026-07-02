@@ -1,7 +1,7 @@
 ---
-title: "[Docker 환경 구축] 1. 도커의 필요성과 WSL2 설치"
+title: "[Docker Setup(Spring)] 1. 도커의 필요성과 WSL2 설치"
 date: 2025-12-24
-categories: [DevOps, Docker, setup]
+categories: [DevOps, Docker, Setup]
 tags: [Docker, WSL2, 개발환경]
 ---
 

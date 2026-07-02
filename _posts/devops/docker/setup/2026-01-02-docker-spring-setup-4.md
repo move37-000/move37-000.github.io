@@ -1,7 +1,7 @@
 ---
-title: (Docker) Spring 배포 환경 구축기 - 4. Docker Compose
+title: "[Docker Setup(Spring)] 4. Docker Compose"
 date: 2026-01-02
-categories: [DevOps, Docker]
+categories: [DevOps, Docker, Setup]
 tags: [Docker, Docker Compose, Spring Boot, MySQL, Redis, nginx]
 ---
 

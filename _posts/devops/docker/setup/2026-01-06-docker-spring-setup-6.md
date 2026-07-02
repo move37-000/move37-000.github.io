@@ -1,7 +1,7 @@
 ---
-title: (Docker) Spring 배포 환경 구축기 - 6. Nginx 리버스 프록시와 최종 연결
+title: "[Docker Setup(Spring)] 6. Nginx 리버스 프록시와 최종 연결"
 date: 2026-01-06
-categories: [DevOps, Docker]
+categories: [DevOps, Docker, Setup]
 tags: [Docker, Nginx, Reverse Proxy, Load Balancing]
 ---
 

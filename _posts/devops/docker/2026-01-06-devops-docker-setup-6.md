@@ -1,7 +1,7 @@
 ---
 title: "[Docker Setup(Spring)] 6. Nginx 리버스 프록시와 최종 연결"
 date: 2026-01-06
-categories: [DevOps, Docker, Setup]
+categories: [DevOps, Docker]
 tags: [Docker, Nginx, Reverse Proxy, Load Balancing]
 ---
 

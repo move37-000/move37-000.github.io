@@ -1,7 +1,7 @@
 ---
 title: "[Docker Setup(Spring)] 2. Docker로 MySQL 띄우기 (Volume 설정)"
 date: 2025-12-29
-categories: [DevOps, Docker, Setup]
+categories: [DevOps, Docker]
 tags: [Docker, MySQL, Volume]
 ---
 

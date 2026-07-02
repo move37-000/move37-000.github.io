@@ -1,7 +1,7 @@
 ---
 title: "[Docker Setup(Spring)] 5. application.yml 설정과 Multi-Profile"
 date: 2026-01-05
-categories: [DevOps, Docker, Setup]
+categories: [DevOps, Docker]
 tags: [Docker, Spring Boot, application.yml, Multi-Profile]
 ---
 

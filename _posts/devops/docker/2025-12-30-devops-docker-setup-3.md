@@ -1,7 +1,7 @@
 ---
 title: "[Docker Setup(Spring)] 3. Spring Boot 애플리케이션 이미지 빌드 및 실행"
 date: 2025-12-30
-categories: [DevOps, Docker, Setup]
+categories: [DevOps, Docker]
 tags: [Docker, Spring Boot, Dockerfile, 배포]
 ---
 

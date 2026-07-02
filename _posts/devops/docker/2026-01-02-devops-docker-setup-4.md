@@ -1,7 +1,7 @@
 ---
 title: "[Docker Setup(Spring)] 4. Docker Compose"
 date: 2026-01-02
-categories: [DevOps, Docker, Setup]
+categories: [DevOps, Docker]
 tags: [Docker, Docker Compose, Spring Boot, MySQL, Redis, nginx]
 ---
 

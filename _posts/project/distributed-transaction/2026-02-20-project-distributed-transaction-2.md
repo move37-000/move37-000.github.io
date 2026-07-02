@@ -1,7 +1,7 @@
 ---
 title: "[분산 트랜잭션] 2. 외부 결제 API 연동과 커넥션 풀 고갈"
 date: 2026-02-20
-categories: [Project, Java, Distributed Transaction]
+categories: [Project, Distributed Transaction]
 tags: [spring-boot, jpa, connection-pool, HikariCP, payment-api, load-test, k6]
 ---
 

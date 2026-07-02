@@ -1,7 +1,7 @@
 ---
 title: "[분산 트랜잭션] 3. Transactional Outbox 패턴으로 커넥션 풀 고갈 해결"
 date: 2026-02-26
-categories: [Project, Java, Distributed Transaction]
+categories: [Project, Distributed Transaction]
 tags: [spring-boot, jpa, Kafka, outbox-pattern, transactional-outbox, load-test, k6]
 ---
 

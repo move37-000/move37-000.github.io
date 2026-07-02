@@ -1,7 +1,7 @@
 ---
 title: "[분산 트랜잭션] 1. 모놀리식 주문 시스템과 낙관적 락의 한계"
 date: 2026-02-13
-categories: [Project, Java, Distributed Transaction]
+categories: [Project, Distributed Transaction]
 tags: [spring-boot, jpa, optimistic-lock, concurrency, load-test, k6]
 ---
 

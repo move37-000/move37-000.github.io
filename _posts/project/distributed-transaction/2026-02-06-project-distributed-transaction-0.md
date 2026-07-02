@@ -1,7 +1,7 @@
 ---
 title: "[분산 트랜잭션] 0. 프로젝트 설계"
 date: 2026-02-06
-categories: [Project, Java, Distributed Transaction]
+categories: [Project, Distributed Transaction]
 tags: [spring-boot, jpa, saga, outbox, distributed-transaction, project-setup]
 ---
 

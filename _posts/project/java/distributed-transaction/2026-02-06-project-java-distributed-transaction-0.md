@@ -1,9 +1,8 @@
 ---
-title: 분산 트랜잭션 - 0. 프로젝트 설계
+title: "[분산 트랜잭션] 0. 프로젝트 설계"
 date: 2026-02-06
 categories: [Spring, Project]
 tags: [spring-boot, jpa, saga, outbox, distributed-transaction, project-setup]
-image: 
 ---
 
 ## 분산 트랜잭션 #0 - 프로젝트 설계

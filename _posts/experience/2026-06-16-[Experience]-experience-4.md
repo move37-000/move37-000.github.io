@@ -1,7 +1,7 @@
 ---
 title: "해시, 고의로 원본을 잊어버리는 이유 - 1"
 date: 2026-06-16
-categories: [Security]
+categories: [Curiosity, Security]
 tags: [보안, 해시, 암호화, 비밀번호, 솔트, 페퍼, CI, DI]
 image:
 ---

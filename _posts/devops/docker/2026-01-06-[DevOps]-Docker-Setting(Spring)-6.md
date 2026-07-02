@@ -3,8 +3,6 @@ title: (Docker) Spring 배포 환경 구축기 - 6. Nginx 리버스 프록시와
 date: 2026-01-06
 categories: [DevOps, Docker]
 tags: [Docker, Nginx, Reverse Proxy, Load Balancing]
-description: Nginx를 이용한 외부 통로 개방 및 Docker 배포 환경 완성
-image: 
 ---
 
 > 본 포스팅에서는 아래 내용에 대해 소개합니다.

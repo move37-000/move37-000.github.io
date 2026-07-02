@@ -3,8 +3,6 @@ title: (Docker) Spring 배포 환경 구축기 - 5. application.yml 설정과 Mu
 date: 2026-01-05
 categories: [DevOps, Docker]
 tags: [Docker, Spring Boot, application.yml, Multi-Profile]
-description: 파일 분리를 통한 환경별 Spring Boot 설정 최적화
-image: 
 ---
 
 > 본 포스팅에서는 아래 내용에 대해 소개합니다.

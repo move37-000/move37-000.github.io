@@ -1,10 +1,8 @@
 ---
-title: (Docker) Spring 배포 환경 구축기 - 1. 도커의 필요성과 WSL2 설치
+title: (Docker) Spring 배포 환경 - 1. 도커의 필요성과 WSL2 설치
 date: 2025-12-24
 categories: [DevOps, Docker]
 tags: [Docker, WSL2, 개발환경]
-description: Docker 와 개발환경
-image: 
 ---
 
 > 본 포스팅에서는 아래 내용에 대해 소개합니다.

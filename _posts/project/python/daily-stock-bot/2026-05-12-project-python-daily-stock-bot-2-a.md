@@ -1,5 +1,5 @@
 ---
-title: Daily Stock Bot 리팩토링 - 2-a. Port 설계
+title: "[Python Project Refactoring] 2-a. Port 설계"
 date: 2026-05-12
 categories: [Python, Project]
 tags: [python, refactoring, hexagonal-architecture, port-adapter, protocol, dependency-injection]

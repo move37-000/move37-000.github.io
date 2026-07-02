@@ -1,5 +1,5 @@
 ---
-title: Daily Stock Bot 리팩토링 - 3-a. 예외 계층과 재시도 데코레이터
+title: "[Python Project Refactoring] 3-a. 예외 계층과 재시도 데코레이터"
 date: 2026-05-20
 categories: [Python, Project]
 tags: [python, refactoring, exception-handling, retry, decorator, hexagonal-architecture, fail-fast]

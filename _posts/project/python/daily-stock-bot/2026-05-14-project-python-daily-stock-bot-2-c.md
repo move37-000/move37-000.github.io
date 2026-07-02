@@ -1,5 +1,5 @@
 ---
-title: Daily Stock Bot 리팩토링 - 2-c. main.py 조립
+title: "[Python Project Refactoring] 2-c. main.py 조립"
 date: 2026-05-14
 categories: [Python, Project]
 tags: [python, refactoring, hexagonal-architecture, adapter, dependency-injection, fail-fast, exit-code]

@@ -1,9 +1,8 @@
 ---
-title: 당연했던 것들에 생각이 들어간다면
+title: "당연했던 것들에 생각이 들어간다면"
 date: 2026-04-15
 categories: [Retrospective, Backend]
 tags: [java, spring, mybatis, nexacro, oracle, legacy, architecture]
-image:
 ---
 
 ## 바램과 현실 사이에서

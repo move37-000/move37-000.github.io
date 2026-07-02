@@ -1,9 +1,8 @@
 ---
-title: 지금에서야 알아본 GraphQL
+title: "지금에서야 알아본 GraphQL"
 date: 2026-06-11
 categories: [Curiosity, Frontend]
 tags: [graphql, rest, api, schema, backend, web]
-image:
 ---
 
 ## 들어가며

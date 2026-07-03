@@ -3,7 +3,7 @@ title: "당연했던 것들에 생각이 들어간다면"
 date: 2026-04-15
 categories: [Backend, architecture]
 tags: [java, spring, mybatis, nexacro, oracle, legacy, architecture]
-tags: [java, spring, mybatis, nexacro, oracle, legacy, retrospective]
+tags: [retrospective]
 
 ---
 

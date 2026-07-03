@@ -2,7 +2,7 @@
 title: "새로운 틀, 남겨진 수많은 틀"
 date: 2026-06-02
 categories: [Retrospective, trade-off]
-tags: [spring, mybatis, nexacro, dto, infinite-scroll, design, retrospective]
+tags: [spring, mybatis, nexacro, dto, pagination, design, retrospective]
 tags: [spring, mybatis, nexacro, dto, pagination, trade-off, retrospective]
 ---
 

@@ -5,6 +5,8 @@ categories: [Backend, architecture]
 tags: [python, hexagonal-architecture, port-adapter, yagni, ai-collaboration, retrospective]
 ---
 
+> 본 포스팅은 [Daily Stock Bot](https://move37-000.github.io/posts/project-daily-stock-bot-refactoring-5/) 프로젝트에서 이어짐.
+
 ## 남은 질문
 프로젝트를 마무리지은 후 세 개의 의문이 남았다. 교체 가능성이 반드시 존재하지는 않을 때, 헥사고날 아키텍처는 좋은 구조인가. 그 구조가 이 프로젝트에 준 것은 무엇이고, 그 대가는 무엇이었나.
 

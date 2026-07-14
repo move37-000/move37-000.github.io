@@ -94,6 +94,7 @@ GitHub Actions이 매일 오전 7시(KST)에 파이프라인을 자동 실행한
 
 ### 실제 실행 로그
 
+[실행 캡쳐 사진]
 
 ## What's Next
 이 프로젝트는 데이터 소스가 `yfinance` 하나뿐인 채로 끝났다. Port/Adapter의 교체 가능성이 검증되지 못했다.
@@ -101,3 +102,5 @@ GitHub Actions이 매일 오전 7시(KST)에 파이프라인을 자동 실행한
 출력에서도 알림은 Slack/Discord 두 구현으로 교체 가능성을 보였지만, 리포트는 오히려 'Port를 두지 않는 게 맞다'는 반대 결과도 발생했다.
 
 그렇다면 교체 가능성이 (반드시)존재하지 않을 때, hexagonal architecture는 좋은 구조인가? 이 구조가 준 것과 그 대가는 무엇이었는가?
+
+> [맞춤 제작, 오지 않은 손님](https://move37-000.github.io/posts/backend-architecture-3/) 

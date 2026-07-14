@@ -3,7 +3,6 @@ title: 맞춤 제작, 오지 않은 손님
 date: 2026-07-06
 categories: [Backend, architecture]
 tags: []
-published: false
 ---
 
 ## 남은 질문

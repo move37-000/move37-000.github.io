@@ -10,7 +10,7 @@ tags: [python, hexagonal-architecture, port-adapter, yagni, ai-collaboration, re
 
 이 질문들은 프로젝트 막바지에 생긴 게 아니다. `Phase 3`의 예외 계층에서, 어댑터마다 예외를 번역하는 코드를 반복해서 쓰다가 문득 생각이 들었었다. 어댑터가 여덟 개인데 데이터 소스는 하나다. 이 Port들은 무엇을 위해 존재하는가.
 
-헥사고날 아키텍처를 다시 알아보다가 카카오페이 기술블로그의 [「Hexagonal Architecture, 진짜 하실 건가요?」](https://tech.kakaopay.com/post/home-hexagonal-architecture/)를 읽게 됐다. 카카오페이 홈 서비스에 헥사고날 아키텍처를 적용했다가 **걷어낸 회고**다. 도입기가 아니라 철수기다.
+헥사고날 아키텍처를 다시 알아보다가 카카오페이 기술블로그의 [Hexagonal Architecture, 진짜 하실 건가요?](https://tech.kakaopay.com/post/home-hexagonal-architecture/){:target="_blank"}를 읽게 됐다. 카카오페이 홈 서비스에 헥사고날 아키텍처를 적용했다가 **걷어낸 회고**다. 도입기가 아니라 철수기다.
 
 읽으면서 생각이 더 깊어졌다. 남의 실패담을 읽는 기분이 아니었다. 그때는 `Phase 3` 한복판이었고 리팩토링을 되돌릴 수도 없었으므로, 그 당시의 생각을 회고까지 미뤄뒀었다.
 

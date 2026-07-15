@@ -130,7 +130,7 @@ public class ErrorTest {
 }
 ```
 
-[에러 사진 3]
+[실행 결과 3]
 
 최종 조상은 `Exception → Throwable`이다. 그런데도 unchecked다. **컴파일러는 "최종 조상"이 아니라 "사슬 어딘가에 `RuntimeException`이 있느냐"를 본다.**
 

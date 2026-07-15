@@ -93,9 +93,9 @@ class MyUnchecked extends RuntimeException {}
 
 [에러 사진 1]
 
-[에러 사진 2]
+throws 를 추가하면 된다. 
 
-> throws 를 추가하면 된다.
+[에러 사진 2]
 
 **클래스 내용이 동일한데 `extends` 뒤 한 단어로 결과가 정반대다.** 구분이 클래스 내용이 아니라 상속 계보에 있다는 증거다.
 
@@ -145,6 +145,8 @@ static <T extends Throwable> void sneakyThrow(Throwable param) throws T {
 ```
 
 호출부에 힌트가 없으면 컴파일러는 `T`를 `RuntimeException`으로 추론한다. `throws T`가 unchecked로 보이니 강제하지 않는다. 그리고 `(T)` 캐스팅은 제네릭 소거(erasure)로 런타임엔 사라져서, 원본 checked 예외가 그대로 던져진다.
+
+> 파라미터가 T param이 아니라 Throwable param이라 T와 연결되지 않고, 반환도 void라 T를 추론할 힌트가 어디에도 없다. 이럴 때 컴파일러는 T를 RuntimeException으로 추론한다.
 
 ```java
 public class ErrorTest {

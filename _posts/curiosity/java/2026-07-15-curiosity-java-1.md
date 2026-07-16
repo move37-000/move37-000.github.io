@@ -91,11 +91,13 @@ class MyUnchecked extends RuntimeException {}
 
 `MyUnchecked`는 `throws` 선언 없이 던져도 컴파일이 통과한다. `MyChecked`를 선언 없이 던지면
 
-![](/assets/img/posts/curiosity/java/curiosity-java-1-img-1.png)*[throw 미선언]*
+![](/assets/img/posts/curiosity/java/curiosity-java-1-img-1.png)
+
+![](/assets/img/posts/curiosity/java/curiosity-java-1-img-2.png)*[throw 미선언]*
 
 throws 를 추가하면 된다. 
 
-[에러 사진 2]
+![](/assets/img/posts/curiosity/java/curiosity-java-1-img-3.png)
 
 **클래스 내용이 동일한데 `extends` 뒤 한 단어로 결과가 정반대다.** 구분이 클래스 내용이 아니라 상속 계보에 있다는 증거다.
 

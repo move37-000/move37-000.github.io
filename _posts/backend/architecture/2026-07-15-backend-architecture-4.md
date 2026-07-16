@@ -35,7 +35,7 @@ void saveHistory(...) throws ServletException, IOException, SQLException;
 여기서 의문이 생겼다. **같은 예외인데 왜 어떤 건 강제당하고 어떤 건 강제당하지 않는가?**
 
 ## checked / unchecked
-java 의 예외처리 규칙에는 두 가지 기준이 있다.
+Java의 예외처리 규칙에는 두 가지 기준이 있다.
 - **checked**: 컴파일러가 "이 예외 던지는 코드를 부를 거면 반드시 잡거나(`try-catch`) 선언(`throws`)하라"고 강제한다. 안 하면 컴파일 자체가 안 된다.
 - **unchecked**: 컴파일러가 아무것도 강요하지 않는다. 안 잡으면 상위로 전파된다.
 

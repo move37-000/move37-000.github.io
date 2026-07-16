@@ -136,7 +136,7 @@ public class ErrorTest {
 
 ### 실험 3 — sneaky throw, 속는 건 JVM이 아니라 컴파일러다
 
-찾아보다 롬복의 `@SneakyThrows`를 만났다. 처음엔 "javac가 강제한 걸 JVM이 실행 중에 무효화하나?" 싶었다. 반대였다. JVM은 checked를 구분하지도 않으니 속일 대상이 아니다. 속는 건 컴파일 타임의 javac다. 원리는 제네릭 타입 추론이다.
+찾아보다 롬복의 `@SneakyThrows`를 만났다. 처음엔 "javac가 강제한 걸 JVM이 실행 중에 무효화하나?" 싶었다. 반대였다. JVM은 checked를 구분하지도 않으니 속일 대상이 아니다. **속는 건 컴파일 타임의 javac다.** 원리는 제네릭 타입 추론이다.
 
 ```java
 static <T extends Throwable> void sneakyThrow(Throwable param) throws T {

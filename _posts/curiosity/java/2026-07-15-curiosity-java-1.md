@@ -1,5 +1,5 @@
 ---
-title: "throws 한 줄, 컴파일러까지 내려간 기록"
+title: "throws 한 줄, 무의식적으로 쓰는 한 줄"
 date: 2026-07-15
 categories: [Curiosity, Java]
 tags: [java, exception, checked, unchecked, JLS, javac, SneakyThrows, mybatis, spring, retrospective]
@@ -13,7 +13,7 @@ void saveHistory(...) throws ServletException, IOException, SQLException;
 
 내가 만든 시그니처다. 정확히는, **무의식적으로 복붙하다 나온 거다.** 늘 하던 대로 어딘가의 시그니처를 가져다 붙였고, 늘 그랬듯 잘 돌아갔고, 그래서 한 번도 의심하지 않았다.
 
-그런데 이번엔 걸렸다. 이걸 호출하는 서비스에서 "그냥 시그니처에 `throws`로 올려버릴까? 어차피 컨트롤러에서 전역으로 잡는데" 라고 생각했다. 그런데, **MyBatis 매퍼가 `ServletException`을 던질 일이 대체 뭐가 있지?**
+그런데 이번엔 계속 눈길이 갔다. 이걸 호출하는 서비스에서 "그냥 시그니처에 `throws`로 올려버릴까? 어차피 컨트롤러에서 전역으로 잡는데" 라고 생각했다. 그런데, **MyBatis 매퍼가 `ServletException`을 던질 일이 대체 뭐가 있지?**
 
 ## 던질 리 없는 예외가 시그니처에 있었다
 답은 "없다"였다. 이 인터페이스는 MyBatis 쿼리 하나를 실행할 뿐이다. 서블릿 API를 사용하지도, 파일 IO를 하지도 않는다. `ServletException`과 `IOException`은 **웹 계층의 예외인데 영속 계층 시그니처까지 침범한 것이고**, 출처는 내 복붙이었다.

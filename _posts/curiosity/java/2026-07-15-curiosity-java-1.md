@@ -102,7 +102,6 @@ throws 를 추가하면 된다.
 **클래스 내용이 동일한데 `extends` 뒤 한 단어로 결과가 정반대다.** 구분이 클래스 내용이 아니라 상속 계보에 있다는 증거다.
 
 ### 실험 2 — 사슬 "중간"의 RuntimeException
-
 `DataAccessException(→ NestedRuntimeException → RuntimeException)` 구조를 비슷하게 재현했다. `Level2 → Level1 → Level0 → RuntimeException`으로 계단을 만들고, `RuntimeException`을 직접 상속하지 않는 `Level2`를 `throws` 없이 던져봤다.
 
 ```java
@@ -132,7 +131,7 @@ public class ErrorTest {
 }
 ```
 
-[실행 결과 (3)]
+![](/assets/img/posts/curiosity/java/curiosity-java-1-img-4.png)
 
 최종 조상은 `Exception → Throwable`이다. 그런데도 unchecked다. **컴파일러는 "최종 조상"이 아니라 "사슬 어딘가에 `RuntimeException`이 있느냐"를 본다.**
 

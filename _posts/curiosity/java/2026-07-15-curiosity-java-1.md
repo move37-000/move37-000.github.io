@@ -93,7 +93,7 @@ class MyUnchecked extends RuntimeException {}
 
 ![](/assets/img/posts/curiosity/java/curiosity-java-1-img-1.png)
 
-![](/assets/img/posts/curiosity/java/curiosity-java-1-img-2.png)*[throw 미선언]*
+![](/assets/img/posts/curiosity/java/curiosity-java-1-img-2.png)
 
 throws 를 추가하면 된다. 
 
@@ -163,11 +163,13 @@ public class ErrorTest {
 
 위 소스를 실제로 돌려보면, `throws`도 try-catch도 없는 메서드에서 런타임에 `MyChecked`(checked)가 튀어나온다.
 
-[에러 사진 4]
+![](/assets/img/posts/curiosity/java/curiosity-java-1-img-5.png)
 
 하지만 이렇게 나가는 checked 예외를 **명시적으로 잡으려 하면 오히려 컴파일 에러가 난다.**
 
-[에러 사진 5]
+![](/assets/img/posts/curiosity/java/curiosity-java-1-img-6.png)
+
+![](/assets/img/posts/curiosity/java/curiosity-java-1-img-7.png)
 
 컴파일러 입장에선 이 예외가 여기서 던져질 리 없다고 믿으니, catch를 "도달 불가능"으로 판정하는 것이다. **컴파일러가 예외의 존재 자체를 못 보고 있다**는 증거다.
 

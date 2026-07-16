@@ -203,7 +203,7 @@ public class ErrorTest {
 
 - checked/unchecked의 "check" 주체는 컴파일러다. checked는 컴파일러가 처리(잡기/선언)를 강제하고, unchecked는 강제하지 않는다.
 - 구분 기준은 클래스 내용이 아니라 **상속 사슬에 `RuntimeException`이 있느냐**다. `RuntimeException` 자체는 로직 없는 기준점(marker)이다.
-- 규칙은 JLS가 정의하고 javac가 컴파일 타임에 집행하며, **JVM은 실행 중 이 구분을 신경 쓰지 않는다.** 그래서 컴파일러(제네릭 타입 추론)만 가리면 checked도 선언 없이 가능하다.
+- 규칙은 JLS가 정의하고 javac가 컴파일 타임에 집행하며, **JVM은 실행 중 이 구분을 신경 쓰지 않는다.** 그래서 컴파일러(제네릭 타입 추론)만 가리면 checked도 선언 없이 던질 수 있다.
 - mybatis-spring 매퍼는 `SQLException`을 밖으로 던지지 않는다. 프록시 안에서 unchecked인 `DataAccessException` 계층으로 번역돼 나온다. 매퍼 시그니처의 `throws`는 필요 없다.
 - 예외는 기본적으로 흘려보내고, **도메인 번역 / 보상 / 정책 강제** 세 가지 이유가 있을 때만 잡는다. 정보 보존의 관건은 잡는 위치가 아니라 cause 체인과 throwable 로깅이다.
 - 커스텀 예외의 checked/unchecked 선택은 "호출자가 복구할 수 있는가"라는 질문에 대한 답을 상속 구조로 선언하는 것이다.

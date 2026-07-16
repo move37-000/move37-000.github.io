@@ -5,7 +5,7 @@ categories: [Curiosity, Java]
 tags: [java, exception, checked, unchecked, JLS, javac, mybatis, spring, SneakyThrows]
 ---
 
-새로운 기능 개발 중(이력 관련), repository 인터페이스에 이런 시그니처가 있었다.
+이력 저장 기능을 개발하던 중, repository 인터페이스에 이런 시그니처가 있었다.
 
 ```java
 void saveHistory(...) throws ServletException, IOException, SQLException;

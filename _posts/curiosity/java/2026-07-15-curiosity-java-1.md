@@ -1,5 +1,5 @@
 ---
-title: "throws 한 줄, 무의식적으로 쓰는 한 줄"
+title: "Checked Exception / unchecked Exception"
 date: 2026-07-15
 categories: [Curiosity, Java]
 tags: [java, exception, checked, unchecked, JLS, javac, SneakyThrows, mybatis, spring, retrospective]

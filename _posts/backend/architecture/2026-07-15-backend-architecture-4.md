@@ -16,7 +16,7 @@ void saveHistory(...) throws ServletException, IOException, SQLException;
 그런데 이번엔 걸렸다. 이걸 호출하는 서비스에서 "그냥 시그니처에 `throws`로 올려버릴까? 어차피 컨트롤러에서 전역으로 잡는데" 라고 생각했다. 그런데, **MyBatis 매퍼가 `ServletException`을 던질 일이 대체 뭐가 있지?**
 
 ## 던질 리 없는 예외가 시그니처에 있었다
-답은 "없다"였다. 이 인터페이스는 MyBatis 쿼리 하나를 실행할 뿐이다. 서블릿 API를 사용하지도, 파일 IO를 하지도 않는다. `ServletException`과 `IOException`가 **웹 계층의 예외가 영속 계층 시그니처까지 침범했고**, 출처는 내 복붙이었다.
+답은 "없다"였다. 이 인터페이스는 MyBatis 쿼리 하나를 실행할 뿐이다. 서블릿 API를 사용하지도, 파일 IO를 하지도 않는다. `ServletException`과 `IOException`은 **웹 계층의 예외인데 영속 계층 시그니처까지 침범한 것이고**, 출처는 내 복붙이었다.
 
 그럼 `SQLException`은? 쿼리를 실행하니 이건 맞는 거 아닌가. 하지만 알고보니 **mybatis-spring 환경에서 매퍼는 `SQLException`을 밖으로 던지지 않는다.**
 
@@ -130,7 +130,7 @@ public class ErrorTest {
 }
 ```
 
-[실행 결과 3]
+[실행 결과 (3)]
 
 최종 조상은 `Exception → Throwable`이다. 그런데도 unchecked다. **컴파일러는 "최종 조상"이 아니라 "사슬 어딘가에 `RuntimeException`이 있느냐"를 본다.**
 

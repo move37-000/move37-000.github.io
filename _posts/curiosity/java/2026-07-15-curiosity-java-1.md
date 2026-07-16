@@ -2,7 +2,7 @@
 title: "throws 한 줄, 컴파일러까지 내려간 기록"
 date: 2026-07-15
 categories: [Curiosity, Java]
-tags: [java, exception, checked, unchecked, JLS, javac, mybatis, spring, SneakyThrows]
+tags: [java, exception, checked, unchecked, JLS, javac, SneakyThrows, mybatis, spring, retrospective]
 ---
 
 이력 저장 기능을 개발하던 중, repository 인터페이스에 이런 시그니처가 있었다.

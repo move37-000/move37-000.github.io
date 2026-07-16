@@ -376,7 +376,7 @@ Watchdog:   [30초 설정] [30초 연장] [30초 연장]...
 | **Redis** | `Redis 7.0` |
 
 ### 테스트 결과
-![](/assets/img/portfolio/lab/concurrency-control/concurrency-control-3/Portfolio-concurrency-control-3-1.png)*[k6 test]*
+![](/assets/img/posts/project/concurrency-control/concurrency-control-3/concurrency-control-3-img-1.png)*[k6 test]*
 
 ```
 // 테스트 결과 요약

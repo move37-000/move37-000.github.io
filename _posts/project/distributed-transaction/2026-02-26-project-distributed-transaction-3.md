@@ -254,15 +254,15 @@ curl http://host.docker.internal:8080/api/v1/stocks/1/remaining
 ```
 
 ### 테스트 결과
-![](/assets/img/portfolio/lab/distributed-transaction/distributed-transaction-3/Portfolio-distributed-transaction-3-1.png)*[k6 test]*
+![](/assets/img/posts/project/distributed-transaction/distributed-transaction-3/distributed-transaction-3-img-1.png)*[k6 test]*
 
-![](/assets/img/portfolio/lab/distributed-transaction/distributed-transaction-3/Portfolio-distributed-transaction-3-2.png)*[orders/summary]*
+![](/assets/img/posts/project/distributed-transaction/distributed-transaction-3/distributed-transaction-3-img-2.png)*[orders/summary]*
 
-![](/assets/img/portfolio/lab/distributed-transaction/distributed-transaction-3/Portfolio-distributed-transaction-3-3.png)*[payments/summary]*
+![](/assets/img/posts/project/distributed-transaction/distributed-transaction-3/distributed-transaction-3-img-3.png)*[payments/summary]*
 
-![](/assets/img/portfolio/lab/distributed-transaction/distributed-transaction-3/Portfolio-distributed-transaction-3-4.png)*[outbox/remaining]*
+![](/assets/img/posts/project/distributed-transaction/distributed-transaction-3/distributed-transaction-3-img-4.png)*[outbox/remaining]*
 
-![](/assets/img/portfolio/lab/distributed-transaction/distributed-transaction-3/Portfolio-distributed-transaction-3-5.png)*[stocks/remaining]*
+![](/assets/img/posts/project/distributed-transaction/distributed-transaction-3/distributed-transaction-3-img-5.png)*[stocks/remaining]*
 
 ## 결과 분석
 

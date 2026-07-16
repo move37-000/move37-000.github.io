@@ -200,11 +200,11 @@ curl http://localhost:8080/api/v1/stocks/1/remaining
 ```
 
 ### 테스트 결과
-![](/assets/img/portfolio/lab/distributed-transaction/distributed-transaction-1/Portfolio-distributed-transaction-1-1.png)*[k6 test]*
+![](/assets/img/posts/project/distributed-transaction/distributed-transaction-1/distributed-transaction-1-img-1.png)*[k6 test]*
 
-![](/assets/img/portfolio/lab/distributed-transaction/distributed-transaction-1/Portfolio-distributed-transaction-1-2.png)*[orders/summary]*
+![](/assets/img/posts/project/distributed-transaction/distributed-transaction-1/distributed-transaction-1-img-2.png)*[orders/summary]*
 
-![](/assets/img/portfolio/lab/distributed-transaction/distributed-transaction-1/Portfolio-distributed-transaction-1-3.png)*[stocks/remaining]*
+![](/assets/img/posts/project/distributed-transaction/distributed-transaction-1/distributed-transaction-1-img-3.png)*[stocks/remaining]*
 
 ## 결과 분석
 

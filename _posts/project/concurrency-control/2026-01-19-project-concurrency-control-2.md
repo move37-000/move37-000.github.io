@@ -185,7 +185,7 @@ public class Coupon {
 | **락 타임아웃** | `3초` |
 
 ### 테스트 결과
-![](/assets/img/portfolio/lab/concurrency-control/concurrency-control-2/Portfolio-concurrency-control-2-1.png)*[k6 test]*
+![](/assets/img/posts/project/concurrency-control/concurrency-control-2/concurrency-control-2-img-1.png)*[k6 test]*
 
 ```
 // 테스트 결과 요약

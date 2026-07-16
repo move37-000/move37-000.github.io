@@ -304,7 +304,7 @@ public class CouponIssueTransactionalService {
 | **Connection Pool** | `HikariCP(max: 50)` |
 
 ### 테스트 결과
-![](/assets/img/portfolio/lab/concurrency-control/concurrency-control-1/Portfolio-concurrency-control-1-1.png)*[k6 test]*
+![](/assets/img/posts/project/concurrency-control/concurrency-control-1/concurrency-control-1-img-1.png)*[k6 test]*
 
 ```
 // 테스트 결과 요약
@@ -319,7 +319,7 @@ public class CouponIssueTransactionalService {
 **테스트 중 예상치 못한 에러가 발생했다.**
 > 또한 쿠폰 재고 수 100개를 다 채우지도 못했다.
 
-![](/assets/img/portfolio/lab/concurrency-control/concurrency-control-1/Portfolio-concurrency-control-1-2.png)*[Deadlock]*
+![](/assets/img/posts/project/concurrency-control/concurrency-control-1/concurrency-control-1-img-2.png)*[Deadlock]*
 
 ```
 com.mysql.cj.jdbc.exceptions.MySQLTransactionRollbackException:

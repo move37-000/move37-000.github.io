@@ -94,7 +94,7 @@ GitHub Actions이 매일 오전 7시(KST)에 파이프라인을 자동 실행한
 
 ### 실제 실행 로그
 
-![](/assets/img/portfolio/lab/daily-stock-bot/daily-stock-bot-5/Portfolio-daily-stock-bot-5-1.png)*[GitHub Actions]*
+![](/assets/img/posts/project/daily-stock-bot/daily-stock-bot-5/daily-stock-bot-5-img-1.png)*[GitHub Actions]*
 
 ## What's Next
 이 프로젝트는 데이터 소스가 `yfinance` 하나뿐인 채로 끝났다. Port/Adapter의 교체 가능성이 검증되지 못했다.

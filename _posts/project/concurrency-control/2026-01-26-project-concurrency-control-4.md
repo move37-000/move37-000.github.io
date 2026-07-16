@@ -500,7 +500,7 @@ public void handleCouponIssued(CouponIssuedEvent event) {
 | **Kafka** | `Confluent Kafka` |
 
 ### 테스트 결과
-![](/assets/img/portfolio/lab/concurrency-control/concurrency-control-4/Portfolio-concurrency-control-4-1.png)*[k6 test]*
+![](/assets/img/posts/project/concurrency-control/concurrency-control-4/concurrency-control-4-img-1.png)*[k6 test]*
 
 ```
 // 테스트 결과 요약

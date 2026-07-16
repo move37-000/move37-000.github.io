@@ -17,7 +17,7 @@ tags: [Docker, Nginx, Reverse Proxy, Load Balancing]
 
 하지만 **현재 상태로는 브라우저에서 도커 스프링 서비스에 접속할 수 없습니다.** 스프링 컨테이너는 도커 내부 네트워크의 `8080` 포트에 숨어있기 때문입니다. 이제 이 앞단에 `Nginx`를 세워, 외부의 `80(HTTP)` 요청을 안전하게 스프링으로 전달하는 **리버스 프록시(`Reverse Proxy`)** 환경을 구성하겠습니다.
 
-![](/assets/img/devops/docker/docker-setting-6/Docker_Setting(Spring)_6_img_1.png)*Nginx*
+![](/assets/img/posts/devops/docker/devops-docker-setup-6/devops-docker-setup-6-img-1.png)*Nginx*
 
 ## Nginx 리버스 프록시?
 
@@ -35,7 +35,7 @@ tags: [Docker, Nginx, Reverse Proxy, Load Balancing]
 4. 톰캣은 `Nginx`가 전달해 준 요청을 받아 `DB`를 조회하거나 비즈니스 로직을 수행한 뒤, 결과물을 다시 `Nginx`에게 돌려줍니다.
 5. `Nginx`는 받은 결과물을 최종적으로 사용자에게 전달합니다.
 
-![](/assets/img/devops/docker/docker-setting-6/Docker_Setting(Spring)_6_img_2.png)*[Nginx connection](https://hostingcanada.org/nginx-vs-apache-explained/)*
+![](/assets/img/posts/devops/docker/devops-docker-setup-6/devops-docker-setup-6-img-2.png)*[Nginx connection](https://hostingcanada.org/nginx-vs-apache-explained/)*
 
 ### 왜 이렇게 번거롭게(?) 전달하나요?
 
@@ -105,19 +105,19 @@ server {
 docker-compose up -d
 ```
 
-![](/assets/img/devops/docker/docker-setting-6/Docker_Setting(Spring)_6_img_3.png)*docker-compose up -d*
+![](/assets/img/posts/devops/docker/devops-docker-setup-6/devops-docker-setup-6-img-3.png)*docker-compose up -d*
 
 ```powershell
 # 실행 상태 확인
 docker ps
 ```
 
-![](/assets/img/devops/docker/docker-setting-6/Docker_Setting(Spring)_6_img_4.png)*docker ps*
+![](/assets/img/posts/devops/docker/devops-docker-setup-6/devops-docker-setup-6-img-4.png)*docker ps*
 
 모든 컨테이너가 `UP` 상태라면, 브라우저를 열고 `http://localhost`에 접속해 봅니다.
 > `Nginx`가 기본 포트인 80번 포트를 사용하므로 포트번호를 명시해줄 필요가 없습니다.
 
-![](/assets/img/devops/docker/docker-setting-6/Docker_Setting(Spring)_6_img_5.png)*http://localhost*
+![](/assets/img/posts/devops/docker/devops-docker-setup-6/devops-docker-setup-6-img-5.png)*http://localhost*
 > 이렇게 반가운 에러페이지는 처음입니다.
 
 ## 완료!
@@ -133,7 +133,7 @@ docker ps
 4. ✅ **Nginx를 통한 리버스 프록시**
 - **정적 파일의 캐싱 및 직접 처리를 전담**하여 톰캣의 부하를 줄이고, **보안 계층(`Reverse Proxy`)을 추가하여 시스템 전체의 응답 성능과 안정성 향상**
 
-![](/assets/img/2026-01-06/Docker_Setting(Spring)_6_img_6.webp)*[Docker architecture](https://sudheer-baraker.medium.com/container-magic-understanding-docker-and-its-basic-concepts-3f90433cdea1)*
+![](/assets/img/posts/devops/docker/devops-docker-setup-6/devops-docker-setup-6-img-6.webp)*[Docker architecture](https://sudheer-baraker.medium.com/container-magic-understanding-docker-and-its-basic-concepts-3f90433cdea1)*
 
 일련의 과정을 통해 단순히 **'서버를 띄웠다'**는 사실보다 더 중요한 것은, 이제 우리의 애플리케이션이 **'개발환경의 일관성'**를 갖게 되었다는 점입니다.
 

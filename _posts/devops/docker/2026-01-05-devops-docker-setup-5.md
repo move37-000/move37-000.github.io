@@ -36,7 +36,7 @@ tags: [Docker, Spring Boot, application.yml, Multi-Profile]
 
 > `application.yml` 또는 `application-{profile}.yml` 파일들은 프로젝트의 `/src/main/resources/` 경로에 위치
 
-![](/assets/img/devops/docker/docker-setting-5/ocker_Setting(Spring)_5_img_1.png)*application.yml*
+![](/assets/img/posts/devops/docker/devops-docker-setup-5/devops-docker-setup-5-img-1.png)*application.yml*
 
  
 ### 1. application.yml
@@ -161,7 +161,7 @@ spring:
 2. **변수 치환**: `application-prod.yml`에 적힌 `${DB_PROD_NAME}` 등은 도커 컨테이너의 시스템 환경 변수에서 값 조회
 3. **네트워크 호스트**: `url`에 적힌 `db-prod`는 도커의 내장 `DNS`가 `db-prod` 컨테이너의 내부 `IP`로 자동 변환
 
-![](/assets/img/devops/docker/docker-setting-5/Docker_Setting(Spring)_5_img_2.png)*[Docker Network](https://www.docker.com/blog/how-docker-desktop-networking-works-under-the-hood/)*
+![](/assets/img/posts/devops/docker/devops-docker-setup-5/devops-docker-setup-5-img-2.png)*[Docker Network](https://www.docker.com/blog/how-docker-desktop-networking-works-under-the-hood/)*
 
 ## 현재까지의 진행 상황
 

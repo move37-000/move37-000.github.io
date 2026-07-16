@@ -229,13 +229,13 @@ curl http://host.docker.internal:8080/api/v1/stocks/1/remaining
 ```
 
 ### 테스트 결과
-![](/assets/img/portfolio/lab/distributed-transaction/distributed-transaction-2/Portfolio-distributed-transaction-2-1.png)*[k6 test]*
+![](/assets/img/posts/project/distributed-transaction/distributed-transaction-2/distributed-transaction-2-img-1.png)*[k6 test]*
 
-![](/assets/img/portfolio/lab/distributed-transaction/distributed-transaction-2/Portfolio-distributed-transaction-2-2.png)*[orders/summary]*
+![](/assets/img/posts/project/distributed-transaction/distributed-transaction-2/distributed-transaction-2-img-2.png)*[orders/summary]*
 
-![](/assets/img/portfolio/lab/distributed-transaction/distributed-transaction-2/Portfolio-distributed-transaction-2-3.png)*[payments/summary]*
+![](/assets/img/posts/project/distributed-transaction/distributed-transaction-2/distributed-transaction-2-img-3.png)*[payments/summary]*
 
-![](/assets/img/portfolio/lab/distributed-transaction/distributed-transaction-2/Portfolio-distributed-transaction-2-4.png)*[stocks/remaining]*
+![](/assets/img/posts/project/distributed-transaction/distributed-transaction-2/distributed-transaction-2-img-4.png)*[stocks/remaining]*
 
 ## 결과 분석
 

@@ -15,7 +15,7 @@ tags: [Docker, Docker Compose, Spring Boot, MySQL, Redis, nginx]
 
 지난 포스팅에서 `Spring Boot` 애플리케이션을 최적화된 이미지로 빌드하고 실행하는 데 성공했습니다. 하지만 실제 서비스는 애플리케이션 혼자 돌아가지 않습니다. `MySQL` 같은 `DB`가 필요하고, 때로는 `Redis` 같은 캐시 서버도 필요하죠.
 
-![](/assets/img/devops/docker/docker-setting-4/Docker_Setting(Spring)_4_img_1.webp)*[Docker Applications](https://medium.com/@ansgar.nell/set-up-a-complete-basic-ecosystem-with-angular-spring-boot-docker-google-cloud-git-and-jenkins-b2e062e684e8)*
+![](/assets/img/posts/devops/docker/devops-docker-setup-4/devops-docker-setup-4-img-1.webp)*[Docker Applications](https://medium.com/@ansgar.nell/set-up-a-complete-basic-ecosystem-with-angular-spring-boot-docker-google-cloud-git-and-jenkins-b2e062e684e8)*
 
 지금까지의 방식대로라면 우리는 매번 다음과 같은 번거로운 과정을 반복해야 합니다.
 1. `Network` 생성 (컨테이너끼리 통신하기 위해)
@@ -35,7 +35,7 @@ tags: [Docker, Docker Compose, Spring Boot, MySQL, Redis, nginx]
 | 컨테이너 간 네트워크 수동 설정 | 서비스 이름으로 자동 `DNS` 실행 |
 | 실행 순서 제어 어려움 | `depends_on`으로 실행 순서 보장 |
 
-![](/assets/img/devops/docker/docker-setting-4/Docker_Setting(Spring)_4_img_2.webp)*[Docker Compose](https://builder.aws.com/content/2qi9qQstGnCWguDzgLg1NgP8lBF/file-structure-of-docker-composeyml-file)*
+![](/assets/img/posts/devops/docker/devops-docker-setup-4/devops-docker-setup-4-img-2.webp)*[Docker Compose](https://builder.aws.com/content/2qi9qQstGnCWguDzgLg1NgP8lBF/file-structure-of-docker-composeyml-file)*
 
 ## docker-compose.yml 작성하기
 
@@ -200,7 +200,7 @@ volumes:
 - `Nginx`: 외부 사용자는 80 포트(`Nginx`)로만 진입 가능
 - `Expose`: `Spring App`은 외부로 포트를 직접 열지 않고(`expose: 8080`), 내부 네트워크(`backend-network`) <br>안에서 `Nginx`하고만 통신하도록 격리
 
-![](/assets/img/devops/docker/docker-setting-4/Docker_Setting(Spring)_4_img_3.webp)*[Docker Compose Healthcheck](https://medium.com/@saklani1408/configuring-healthcheck-in-docker-compose-3fa6439ee280)*
+![](/assets/img/posts/devops/docker/devops-docker-setup-4/devops-docker-setup-4-img-3.webp)*[Docker Compose Healthcheck](https://medium.com/@saklani1408/configuring-healthcheck-in-docker-compose-3fa6439ee280)*
 
 > 실제 실무에서는 `Kubernetes`나 `Cloud` 관리형 서비스를 사용하며, `GitHub Actions` 같은 도구로 배포를 자동화하므로 서버에서 직접 `Compose`를 만지는 일은 드뭅니다.
 

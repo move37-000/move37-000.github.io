@@ -91,7 +91,7 @@ class MyUnchecked extends RuntimeException {}
 
 `MyUnchecked`는 `throws` 선언 없이 던져도 컴파일이 통과한다. `MyChecked`를 선언 없이 던지면
 
-[에러 사진 1]
+![](/assets/img/posts/curiosity/java/curiosity-java-1-img-1.png)*[throw 미선언]*
 
 throws 를 추가하면 된다. 
 

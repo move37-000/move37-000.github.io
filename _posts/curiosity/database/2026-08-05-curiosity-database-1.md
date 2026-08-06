@@ -6,7 +6,7 @@ tags: [oracle, db-link, ORA-03150, dbcp2, connection-pool, evictor, spring, retr
 published: false
 ---
 
-과제 상세 화면에서 예외가 올라왔다.
+특정 업무단 화면에서 예외가 발생했다.
 
 ```
 org.springframework.jdbc.UncategorizedSQLException: SqlMapClient operation;

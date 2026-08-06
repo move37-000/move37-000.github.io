@@ -61,18 +61,22 @@ ds.setMinIdle(15);
 ds.setMaxWaitMillis(10000);
 ds.setRemoveAbandonedOnBorrow(true);
 ds.setRemoveAbandonedTimeout(300);
-ds.setLogAbandoned(true);
+ds.setLogAbandoned(true); // 로컬 전용
 ```
 
-이게 전부였다. 6년을 쓰면서 한 번도 의심하지 않은 설정인데, 이번에 처음으로 **여기 없는 것**이 눈에 들어왔다.
+이게 전부였다. 4년을 쓰면서 한 번도 의심하지도, 관심가지지도 않은 설정들이다.
 
-- `initialSize` 없음 → 기본값 0. 서버가 커넥션 0개로 뜬다.
+하지만 이번에 알아보는 김에 더 자세히 알아보다가, 여기엔 없는 다른 설정들도 알게 되었다.
+
+- `initialSize` 없음 → 기본값 0. 서버가 커넥션 0개로 시작한다.
 - `validationQuery` / `testOnBorrow` 없음 → 죽은 커넥션인지 확인하지 않고 그냥 빌려준다.
-- `timeBetweenEvictionRunsMillis` 없음 → **유휴 점검 스레드가 아예 뜨지 않는다.**
+- `timeBetweenEvictionRunsMillis` 없음 → **유휴 커넥션을 주기적으로 점검하는 Evictor 스레드가 아예 뜨지 않는다.**
 
-마지막 항목이 결정적이다. evictor가 안 돌면 `minEvictableIdleTimeMillis`도 `testWhileIdle`도 minIdle 되채움도 전부 잠자는 설정이 된다. 즉 이 풀은 **한번 만든 커넥션을 갱신하는 장치가 하나도 없었다.**
+Evictor는 커넥션 풀의 백그라운드 청소부 같은 존재다. 일정 주기마다 놀고 있는(idle) 커넥션을 검사해 죽은 커넥션을 제거하고, 필요한 경우 `minIdle` 개수도 유지해 준다.
 
-DB 링크를 물고 있는 커넥션이 영원히 눌러앉아 있어도 아무도 손대지 않는 구조였다.
+Evictor가 안 돌면 `minEvictableIdleTimeMillis`도 `testWhileIdle`도 `minIdle` 도 전부 의미없는 설정이 되므로, 회사 프로젝트의 DBCP 풀은 **유휴 커넥션을 주기적으로 점검하거나 정리하는 메커니즘이 아예 없었던 셈이다.**
+
+결국 DB 서버가 이미 끊어 버린 커넥션도 풀 안에 그대로 남아 있을 수 있었고, 애플리케이션이 그 커넥션을 다시 빌려 사용하는 순간에야 비로소 문제가 드러날 수 있는 구조였다.
 
 ## 진짜 헷갈렸던 것들
 

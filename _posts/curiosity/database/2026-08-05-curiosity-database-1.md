@@ -11,12 +11,12 @@ published: false
 ```
 org.springframework.jdbc.UncategorizedSQLException: SqlMapClient operation;
 uncategorized SQLException for SQL []; SQL state [63000]; error code [3150];
---- Check the sbjtDtlDAO.selectAgrtDoc-InlineParameterMap.
+--- Check the testDAO.selectTest-InlineParameterMap.
 --- Cause: java.sql.SQLException: ORA-03150: 데이터베이스 링크를 위한 통신 채널의 파일 끝
 ORA-02063: line가 선행됨 (IRIS_DB로 부터)
 ```
 
-늘 하던 대로 스택트레이스를 위에서부터 훑었다. iBatis, `SqlMapClientTemplate`, DAO, ServiceImpl, 트랜잭션 인터셉터, 우리 Aspect들. 익숙한 이름이 쭉 나온다. 그런데 아무리 봐도 **고칠 코드가 안 보였다.**
+늘 하던 대로 스택트레이스를 위에서부터 훑었다. 그런데 여러번 다시봐도 **고칠 부분이 안 보였다.**
 
 쿼리도 멀쩡했다.
 

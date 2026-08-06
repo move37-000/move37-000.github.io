@@ -95,8 +95,7 @@ Evictor가 안 돌면 `minEvictableIdleTimeMillis`도 `testWhileIdle`도 `minIdl
 > `abandonedUsageTracking(true)` 설정 시 statement 실행마다 판단 시간이 리셋돼서 이 오판을 막는다.
 
 ## 설정을 바꾸고, 로그를 켰다
-
-방향은 하나로 정리됐다. **커넥션을 방화벽이 링크를 죽이기 전에 먼저 갈아치운다.** 커넥션이 폐기되면 거기 매달린 DB 링크도 같이 정리되고, 새로 만들어진 커넥션은 링크가 없는 상태로 시작한다.
+방향을 **커넥션을 방화벽이 링크를 죽이기 전에 먼저 갈아치우는** 쪽으로 잡았다. 커넥션이 폐기되면 거기 매달린 DB 링크도 같이 정리되고, 새로 만들어진 커넥션은 링크가 없는 상태로 시작한다.
 
 ```java
 ds.setInitialSize(15);

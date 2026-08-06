@@ -138,27 +138,7 @@ ds.setRemoveAbandonedOnMaintenance(true);
 
  **이 검증은 로컬 커넥션이 살아있는지만 확인한다.** `DUAL`은 원격까지 나가지 않으므로, 그 뒤에 매달린 DB 링크의 생사는 검증하지 못한다.
 
-### 관측 3 — 15개여야 할 게 30개였다
-
-설정과 소스만 보면 커넥션은 15개에서 시작해 동시 요청만큼 늘어야 한다. 그런데 로그의 번호가 30까지 올라갔다.
-
-원인을 찾는 데 한참 걸렸고, 답은 설정 파일 안에 있었다.
-
-```java
-@Bean(name = {"oracle19cDataSource", "19cDataSource"})
-public DataSource dataSource19c() { ... dataSourceConfig(dataSource); ... }
-
-@Bean(name = {"oracle11gDataSource", "11gDataSource"})
-public DataSource dataSource11g() { ... dataSourceConfig(dataSource); ... }
-```
-
-**풀이 두 개다.** 우리 시스템은 19c와 11g 두 DB를 쓰고, `dataSourceConfig()` 공통 메서드가 양쪽에 똑같이 적용된다. 설정값 15는 풀 전체 총합이 아니라 **풀 하나당** 적용되는 값이다. 15 + 15 = 30.
-
-로그가 이걸 감췄다. log4jdbc가 붙이는 커넥션 번호는 전역 카운터라 두 풀의 커넥션이 한 줄에 섞여 찍힌다. 로그만 보면 하나의 풀처럼 보인다.
-
-같은 이유로, 이 번호는 커넥션의 ID가 아니다. **생성될 때마다 1씩 오르는 누적 순번**이고, 닫힌 번호는 재활용되지 않는다. 번호가 165까지 갔다고 165개가 열려 있는 게 아니다. 현재 개수는 `opened - closed`로 세야 한다.
-
-### 관측 4 — 한 시간을 방치해도 15개 그대로
+### 3. 한 시간을 방치해도 15개 그대로
 
 여기서 가설이 하나 생겼다. evictor를 5분 주기로, 유휴 폐기를 10분으로 걸어놨으니 아무 요청도 없으면 커넥션이 줄어야 한다. 컨트롤러에서 풀 상태를 찍고 한 시간을 방치했다.
 

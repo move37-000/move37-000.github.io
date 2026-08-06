@@ -13,7 +13,7 @@ org.springframework.jdbc.UncategorizedSQLException: SqlMapClient operation;
 uncategorized SQLException for SQL []; SQL state [63000]; error code [3150];
 --- Check the testDAO.selectTest-InlineParameterMap.
 --- Cause: java.sql.SQLException: ORA-03150: 데이터베이스 링크를 위한 통신 채널의 파일 끝
-ORA-02063: line가 선행됨 (IRIS_DB로 부터)
+ORA-02063: line가 선행됨 (DB_LINK_1 부터)
 ```
 
 늘 하던 대로 스택트레이스를 위에서부터 훑었다. 그런데 여러번 다시봐도 **고칠 부분이 안 보였다.**
@@ -31,8 +31,8 @@ WHERE TEST_ID = ?
 
 이런적이 가끔가다 있었다. 하지만 이번엔 잡아내고 싶었다.
 
-## 에러가 가리키는 곳은 우리 서버가 아니었다
-`ORA-02063: line가 선행됨 (IRIS_DB로 부터)`. 이 한 줄이 발생 지점을 알려준다. `from IRIS_DB`는 **이 에러가 원격 DB 쪽에서 왔다**는 표식이다.
+## 스택트레이스는 정직하게 말해주고 있었다.
+`ORA-02063: line가 선행됨 (DB_LINK_1 부터)`. **이 에러가 원격 DB 쪽에서 왔다**는 의미다.
 
 우리 플랫폼 DB는 일부 데이터를 자기가 갖고 있지 않다. `@IRIS_DB`라는 DB 링크를 통해 다른 DB에서 끌어온다. `FROM UC_SO_SBJT@IRIS_DB`가 그것이다.
 

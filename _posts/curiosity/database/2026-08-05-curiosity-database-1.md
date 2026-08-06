@@ -21,13 +21,13 @@ ORA-02063: line가 선행됨 (IRIS_DB로 부터)
 쿼리도 멀쩡했다.
 
 ```sql
-/* sbjtDtlDAO.selectAgrtDoc */
-SELECT RND_PLDOC_CNLK_DOC_ID AS CNLK_DOC_ID, CNLK_SVC_ID
-  FROM UC_SO_SBJT@IRIS_DB SBJT
- WHERE SBJT_ID = ?
+/* testDAO.selectTest */
+SELECT TEST_COL 
+FROM TABLE1@DB_LINK_1
+WHERE TEST_ID = ?
 ```
 
-문법 오류도, 바인딩 실수도 아니다. 게다가 다시 호출하면 성공했다. 같은 코드, 같은 파라미터, 같은 쿼리인데 한 번 터지고 그 다음엔 멀쩡했다.
+아무런 문제가 없었다. 게다가 다시 호출하면 성공했다. 같은 코드, 같은 파라미터, 같은 쿼리인데도 불구하고 한 번 터지고 그 다음엔 멀쩡했다.
 
 여기서 질문이 바뀌었다. **"코드의 어디가 틀렸나"가 아니라 "왜 코드를 봐도 답이 없나".**
 

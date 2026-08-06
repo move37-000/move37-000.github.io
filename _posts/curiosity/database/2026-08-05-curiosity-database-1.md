@@ -54,8 +54,6 @@ WHERE TEST_ID = ?
 
 ## 그래서 풀 설정을 열어봤다
 
-원인 방향이 커넥션 수명으로 잡혔으니 다음은 우리 풀 설정이다.
-
 ```java
 ds.setMaxTotal(50);
 ds.setMaxIdle(30);

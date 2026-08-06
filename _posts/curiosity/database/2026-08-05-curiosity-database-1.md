@@ -1,5 +1,5 @@
 ---
-title: "열려 있는 커넥션, 끊어진 링크"
+title: ""
 date: 2026-08-05
 categories: [Curiosity, Database]
 tags: [oracle, db-link, ORA-03150, dbcp2, connection-pool, evictor, spring, retrospective]

@@ -120,6 +120,8 @@ ds.setRemoveAbandonedOnMaintenance(true);
 
 DBCP2 데이터소스는 지연 초기화된다. `initialSize`는 "서버 프로세스가 뜨는 시점"이 아니라 "데이터소스가 처음 초기화되는 시점"에 동작하고, 그 시점이 첫 커넥션 요청이다. 기동 직후 첫 화면이 느리고 로그가 유난히 길게 찍히던 현상의 정체가 이거였다.
 
+[이미지 1]
+
 ### 관측 2 — 대여할 때마다 DUAL이 앞에 붙는다
 
 ```
@@ -129,6 +131,8 @@ DBCP2 데이터소스는 지연 초기화된다. `initialSize`는 "서버 프로
 [sqlonly] org.apache.commons.dbcp2.DelegatingPreparedStatement.execute(...)
 16. /* EduDmdExmn.getListCount */ SELECT COUNT(*) FROM SRVY_MASTER ...
 ```
+
+[이미지 2]
 
 `testOnBorrow`가 도는 모습이다. 본 쿼리 직전에 같은 커넥션 번호로 검증 쿼리가 나간다.
 

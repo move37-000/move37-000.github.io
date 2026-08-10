@@ -217,9 +217,8 @@ active=0, idle=15    (한 시간 뒤)
 **DB 링크가 방화벽에 끊기는 장면 자체는 확인하지 못했다.** 사내 폐쇄망 구성이고 원격 DB와 방화벽 정책은 내가 알 수가 없다. "10분 검사가 실제로 ORA-03150 발생률을 낮췄는가"는 운영에 올린 뒤 몇 주간 지켜봐야 안다.
 
 ## 정리
-
-- ORA-03150은 애플리케이션 계층의 예외가 아니다. `ORA-02063 ... from IRIS_DB`가 발생 지점을 알려준다. 무대는 로컬 DB와 원격 DB 사이다.
-- DB 링크 세션은 로컬 세션에 매달린다. 커넥션 풀이 로컬 세션을 오래 재사용하는 만큼, 링크도 오래 방치된다. 방화벽이나 원격 DB가 그 유휴 링크를 끊고, 로컬 DB는 통보받지 못한다.
+- ORA-03150은 애플리케이션 계층의 예외가 아니다. `ORA-02063 ... from IRIS_DB`가 발생 지점을 알려준다. 장소는 로컬 DB와 원격 DB 사이다.
+- DB 링크 세션은 로컬 세션에 매달린다. 커넥션 풀이 로컬 세션을 오래 재사용하는 만큼, 링크도 오래 방치된다. 방화벽이나 원격 DB가 그 유휴 링크를 끊고, 로컬 DB는 그걸 알지 못한다.
 - `minIdle`은 바닥이고 `maxIdle`은 천장이다. 둘 다 idle만 규제하며 active와 무관하다. 기동 시 생성은 `initialSize`, 대기 시간은 `maxWaitMillis`가 맡는다.
 - `timeBetweenEvictionRunsMillis`가 없으면 evictor 스레드가 뜨지 않고, 유휴 폐기·유휴 검증·minIdle 되채움이 전부 죽는다.
 - `minEvictableIdleTimeMillis`는 minIdle을 무시하고 폐기한다. minIdle을 존중하는 쪽은 `softMinEvictableIdleTimeMillis`이고 기본값은 비활성이다.

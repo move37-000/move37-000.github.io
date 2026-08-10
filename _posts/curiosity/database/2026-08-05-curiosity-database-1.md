@@ -220,9 +220,9 @@ active=0, idle=15    (한 시간 뒤)
 - ORA-03150은 애플리케이션 계층의 예외가 아니다. `ORA-02063 ... from IRIS_DB`가 발생 지점을 알려준다. 장소는 로컬 DB와 원격 DB 사이다.
 - DB 링크 세션은 로컬 세션에 매달린다. 커넥션 풀이 로컬 세션을 오래 재사용하는 만큼, 링크도 오래 방치된다. 방화벽이나 원격 DB가 그 유휴 링크를 끊고, 로컬 DB는 그걸 알지 못한다.
 - `minIdle`은 바닥이고 `maxIdle`은 천장이다. 둘 다 idle만 규제하며 active와 무관하다. 기동 시 생성은 `initialSize`, 대기 시간은 `maxWaitMillis`로 설정한다.
-- `timeBetweenEvictionRunsMillis`가 없으면 evictor 스레드가 뜨지 않고, 유휴 폐기 / 유휴 검증 / minIdle 채움이 전부 무의미해진다.
-- `minEvictableIdleTimeMillis`는 minIdle을 무시하고 폐기한다. minIdle을 존중하는 쪽은 `softMinEvictableIdleTimeMillis`이고 기본값은 비활성이다.
-- 그 결과 무트래픽 상태에서 idle 개수는 고정된 채 커넥션 실체만 주기적으로 교체된다. `getNumIdle()` 한 번으로는 관측되지 않는다.
+- `timeBetweenEvictionRunsMillis`가 없으면 evictor 스레드가 뜨지 않고, 유휴 폐기 / 유휴 검증 / minIdle 채움이 전부 적용되지 않는다.
+- `minEvictableIdleTimeMillis`는 minIdle을 무시하고 폐기한다. minIdle을 적용하는 쪽은 `softMinEvictableIdleTimeMillis`이고 기본값은 비활성이다.
+- `minEvictableIdleTimeMillis`을 설정함으로 인해 무트래픽 상태에서 idle 개수는 고정된 채 커넥션만 주기적으로 교체된다. 
 - `testOnBorrow` / `testWhileIdle`의 검증 쿼리는 로컬 커넥션까지만 확인한다. DB 링크의 생사는 검증 범위 밖이다.
 - 커넥션 번호는 생성 누적 순번이다. 현재 개수가 아니고, 여러 풀이 하나의 카운터를 공유한다.
 

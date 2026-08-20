@@ -70,7 +70,7 @@ com.company
 └── batch
 ```
 
-`system/management`와 `safety/task`를 나란히 놓고 보면 차이가 보인다. 둘 다 레벨2인데 한쪽은 아래에 레벨3이 있고, 한쪽은 없다.
+`system/management`와 `safety/task` 는 둘 다 레벨2인데 한쪽은 아래에 레벨3이 있고, 한쪽은 없다.
 
 **메뉴 구조를 그대로 따라갔다면 `safety/task` 아래에도 `task`가 하나 더 있었을 것이다.** 메뉴상으로는 레벨3이 존재하기 때문이다. 그런데 없다.
 
